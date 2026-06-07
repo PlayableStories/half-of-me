@@ -321,16 +321,195 @@ button {
   }
 }
 
+/* ---------- Title scene ---------- */
+.title {
+  justify-content: center;
+  gap: clamp(1.5rem, 6vh, 3rem);
+  animation: fade-in 1.2s ease both;
+}
+
+.title__inner {
+  text-align: center;
+}
+
+.title__name {
+  font-size: clamp(2.4rem, 11vw, 5rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.title__sub {
+  margin-top: 0.8rem;
+  color: var(--ink-dim);
+  font-style: italic;
+  font-size: clamp(0.95rem, 3vw, 1.25rem);
+  max-width: 24ch;
+  margin-inline: auto;
+}
+
+.title__hint {
+  position: static;
+}
+
+/* ---------- World map scene ---------- */
+.worldmap {
+  justify-content: center;
+  gap: clamp(0.8rem, 3vh, 1.6rem);
+  animation: fade-in 0.8s ease both;
+}
+
+.worldmap__caption {
+  color: var(--ink-dim);
+  font-style: italic;
+  font-size: clamp(0.95rem, 3vw, 1.2rem);
+  text-align: center;
+}
+
+.worldmap__svg {
+  width: min(92vw, 720px);
+  height: auto;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.worldmap__path {
+  stroke: var(--ink-dim);
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  stroke-dasharray: 2 3;
+  opacity: 0.55;
+}
+
+.worldmap__node {
+  fill: var(--card-back);
+  stroke: var(--ink-dim);
+  stroke-width: 0.5;
+  transition: fill 0.4s ease;
+}
+
+.worldmap__node.is-visited {
+  fill: var(--colour-yellow);
+}
+
+.worldmap__house {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.worldmap__house rect {
+  fill: var(--colour-yellow);
+  stroke: none;
+}
+
+.worldmap__avatar {
+  fill: var(--ink);
+  stroke: var(--bg);
+  stroke-width: 0.6;
+}
+
+.worldmap__avatar.is-walking {
+  animation: avatar-bob 0.32s ease-in-out infinite;
+}
+
+.worldmap__hint {
+  position: static;
+}
+
+@keyframes avatar-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.6px);
+  }
+}
+
+/* ---------- House / dialogue scene ---------- */
+.house {
+  justify-content: flex-end;
+  cursor: pointer;
+  animation: fade-in 0.8s ease both;
+}
+
+.house__interior {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.house__art {
+  width: min(40vw, 220px);
+  height: auto;
+  opacity: 0.5;
+}
+
+.house__window {
+  fill: rgba(217, 164, 65, 0.14);
+  stroke: var(--ink-dim);
+  stroke-width: 1.2;
+}
+
+.house__mullion {
+  stroke: var(--ink-dim);
+  stroke-width: 1.2;
+}
+
+.dialogue {
+  width: min(92vw, 640px);
+  margin: 0 auto clamp(1rem, 5vh, 2.5rem);
+  padding: clamp(1.1rem, 3vw, 1.6rem) clamp(1.2rem, 4vw, 2rem)
+    clamp(2rem, 5vw, 2.6rem);
+  background: var(--bg-soft);
+  border: 1px solid var(--card-back-edge);
+  border-radius: var(--radius);
+  position: relative;
+  text-align: center;
+}
+
+.dialogue__speaker {
+  color: var(--colour-yellow);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.dialogue__text p {
+  font-size: clamp(1.1rem, 3.6vw, 1.5rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.dialogue__hint {
+  position: absolute;
+  bottom: 0.7rem;
+  left: 0;
+  right: 0;
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .card__inner,
   .card.is-matched .card__inner {
     transition-duration: 0.001ms;
   }
-  .overlay {
+  .overlay,
+  .title,
+  .worldmap,
+  .house {
     animation-duration: 0.001ms;
   }
   .overlay__hint {
+    animation: none;
+  }
+  .worldmap__avatar.is-walking {
     animation: none;
   }
 }

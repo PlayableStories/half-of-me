@@ -38,13 +38,13 @@ npm run preview    # preview the production build
 | `src/styles.css` | Layout, card flip, overlays |
 | `src/game/` | Engine: deck, match logic, story lookup, types |
 | `src/components/` | Board, CardView, Hud, StoryOverlay, EndScreen |
-| `src/scenes/` | Scene manager types + scenes (Phase 0: `CardGameScene`) |
+| `src/scenes/` | Scene manager types + scenes (`Title`, `WorldMap`, `House`, `CardGame`) |
 | `src/icons/` | Per-object line-art SVGs |
 
 ## Roadmap (see the GDD)
 
-- **Phase 0 — Foundation & playable card core** ✅ (this branch)
-- Phase 2 — Title / world map / house / NPC framing scenes
+- **Phase 1 — Foundation & playable card core** ✅
+- **Phase 2 — Title / world map / house / NPC framing scenes** ✅
 - Phase 3 — Refined story fragments
 - Phase 4 — Visual transformation (image → symbol)
 - Phase 5 — Ending screen

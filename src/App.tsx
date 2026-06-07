@@ -1,22 +1,27 @@
 import { useState } from 'react'
 import type { ComponentType } from 'react'
+import { TitleScene } from './scenes/TitleScene'
+import { WorldMapScene } from './scenes/WorldMapScene'
+import { HouseScene } from './scenes/HouseScene'
 import { CardGameScene } from './scenes/CardGameScene'
 import type { SceneId, SceneProps } from './scenes/types'
 
 /**
  * Scene manager. The whole game is a small state machine over `SceneId`. To add
- * a scene (Phases 2 & 5): write its component, register it in SCENES, and call
- * `goTo('<id>')` from wherever the flow advances.
+ * a scene: write its component, register it in SCENES, and call `goTo('<id>')`
+ * from wherever the flow advances.
  *
- * Phase 0 enters straight into the card game. Phase 2 will set INITIAL_SCENE to
- * 'title' and chain title → worldmap → house → cards → ending.
+ * Phase 2 flow: title → worldmap → house → cards. The card game still ends in
+ * place; Phase 5 adds the `ending` scene and routes the end state to it.
  */
-const INITIAL_SCENE: SceneId = 'cards'
+const INITIAL_SCENE: SceneId = 'title'
 
 const SCENES: Partial<Record<SceneId, ComponentType<SceneProps>>> = {
+  title: TitleScene,
+  worldmap: WorldMapScene,
+  house: HouseScene,
   cards: CardGameScene,
-  // title, worldmap, house  → Phase 2
-  // ending                  → Phase 5
+  // ending → Phase 5
 }
 
 export default function App() {
