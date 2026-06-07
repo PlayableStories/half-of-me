@@ -140,13 +140,24 @@ export const content = {
     beginHint: 'press space to begin',
   },
 
-  /** World map — a short SMB3-style walk along a path to the house. */
+  /**
+   * World map — a short SMB3-style overworld. The traveller steps between
+   * connected places; the named places below label the nodes. Keys must match
+   * the node ids in WorldMapScene.
+   */
   worldMap: {
     caption: 'You are a long way from home.',
-    walkOn: 'Walk on',
     enterLabel: 'Enter the house',
-    walkHint: 'click the path, or press space, to walk on',
-    ariaLabel: 'A path leading to a small house',
+    walkHint: 'arrow keys — or click a path — to walk',
+    enterHint: 'press enter to go inside',
+    ariaLabel: 'A map of paths leading to a small house',
+    places: {
+      road: 'the road',
+      woods: 'the woods',
+      bridge: 'the bridge',
+      well: 'the well',
+      house: 'the house',
+    },
   },
 
   /**
