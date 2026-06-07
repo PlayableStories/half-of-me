@@ -372,23 +372,42 @@ button {
   overflow: visible;
 }
 
-.worldmap__path {
+.worldmap__edge {
   stroke: var(--ink-dim);
   stroke-width: 0.8;
   stroke-linecap: round;
   stroke-dasharray: 2 3;
-  opacity: 0.55;
+  opacity: 0.5;
+}
+
+.worldmap__place {
+  cursor: pointer;
 }
 
 .worldmap__node {
   fill: var(--card-back);
   stroke: var(--ink-dim);
   stroke-width: 0.5;
-  transition: fill 0.4s ease;
+  transition: fill 0.4s ease, stroke 0.4s ease;
 }
 
 .worldmap__node.is-visited {
   fill: var(--colour-yellow);
+}
+
+.worldmap__node.is-current {
+  stroke: var(--ink);
+  stroke-width: 0.8;
+}
+
+.worldmap__label {
+  fill: var(--ink-dim);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 3px;
+  text-anchor: middle;
+  pointer-events: none;
+  user-select: none;
 }
 
 .worldmap__house {
@@ -402,6 +421,10 @@ button {
 .worldmap__house rect {
   fill: var(--colour-yellow);
   stroke: none;
+}
+
+.worldmap__house.is-current path {
+  stroke-width: 1.2;
 }
 
 .worldmap__avatar {
