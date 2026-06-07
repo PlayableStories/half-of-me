@@ -1,7 +1,8 @@
 {
-  "name": "half-of-me-game",
+  "name": "half-of-me",
   "private": true,
   "version": "0.0.0",
+  "description": "A short game poem about a home that returns only in fragments.",
   "type": "module",
   "scripts": {
     "dev": "vite",

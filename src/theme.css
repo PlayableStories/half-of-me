@@ -1,0 +1,44 @@
+/* ============================================================================
+ *  Half of Me — THEME
+ * ============================================================================
+ *
+ *  All visual configuration: page palette, fonts, and one card colour per
+ *  colour id in `content.ts`. Re-skinning the look is editing the values below
+ *  (plus the icons in `src/icons/index.tsx`).
+ *
+ *  Coupling: every colour `id` in content.ts must have a matching
+ *  `--colour-<id>` here.
+ *
+ *  Phase 4 will add flat/shaded variants of these colours for the "image
+ *  becomes symbol" transformation.
+ * ============================================================================
+ */
+
+:root {
+  /* ---- Page palette ---- */
+  --bg: #15151a; /* page background */
+  --bg-glow: #20202a; /* top radial glow behind the board */
+  --bg-soft: #1e1e25; /* softer panel background */
+  --ink: #ece9e2; /* primary text (light on dark) */
+  --ink-dim: #9a978f; /* secondary / muted text */
+  --card-back: #2a2a33; /* face-down card surface */
+  --card-back-edge: #3a3a45; /* face-down card border */
+  --accent: #d9d4c8; /* spare accent */
+
+  /* ---- Card colours ----
+   * One per colour `id` in content.ts. The card front uses --colour-<id>.
+   */
+  --colour-yellow: #d9a441; /* warmth / family / comfort */
+  --colour-blue: #4a6c8c; /* distance / sadness / separation */
+  --colour-red: #a4514f; /* love / conflict / urgency */
+  --colour-grey: #7a7a82; /* forgetting / dust / absence */
+
+  /* ---- Fonts ---- */
+  --font-serif: 'Georgia', 'Iowan Old Style', 'Times New Roman', serif;
+
+  /* ---- Spacing tokens (responsive) ---- */
+  --gap: clamp(0.4rem, 1.6vw, 0.85rem);
+  --radius: clamp(0.5rem, 1.6vw, 0.9rem);
+
+  color-scheme: dark;
+}

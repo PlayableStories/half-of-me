@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# Half of Me
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A short game poem about leaving home and remembering it incompletely. It uses a
+memory card game where two cards match if they share **either** the same object
+**or** the same colour — so every match returns only *half* a memory: the thing
+without the feeling, or the feeling without the thing.
 
-Currently, two official plugins are available:
+> You can remember where home was, or how it felt. Not both.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Half of Me is a fresh "Level 2" rebuild that takes its core mechanic from the
+[Memory of Home](https://github.com/PlayableStories/memory-of-home) prototype and
+develops it into a more complete game poem (title, world map, house/NPC framing,
+fading visuals, ending).
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 18 + Vite + TypeScript
+- DOM + CSS for cards and scenes (no canvas / game engine)
+- **Node 24** (see `.nvmrc`)
 
-## Expanding the ESLint configuration
+## Develop
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+nvm use            # Node 24
+npm install
+npm run dev        # dev server with hot reload
+npm run build      # typecheck (tsc -b) + production build
+npm run lint
+npm run preview    # preview the production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Where things live
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Path | What |
+|------|------|
+| `src/content.ts` | All player-facing text + the 12-card deck (single source of truth) |
+| `src/theme.css` | Palette, card colours (`--colour-<id>`), fonts |
+| `src/styles.css` | Layout, card flip, overlays |
+| `src/game/` | Engine: deck, match logic, story lookup, types |
+| `src/components/` | Board, CardView, Hud, StoryOverlay, EndScreen |
+| `src/scenes/` | Scene manager types + scenes (Phase 0: `CardGameScene`) |
+| `src/icons/` | Per-object line-art SVGs |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Roadmap (see the GDD)
+
+- **Phase 0 — Foundation & playable card core** ✅ (this branch)
+- Phase 2 — Title / world map / house / NPC framing scenes
+- Phase 3 — Refined story fragments
+- Phase 4 — Visual transformation (image → symbol)
+- Phase 5 — Ending screen
+- Phase 6 — Polish (animation, sound, typography, layout)
+
+The scene manager in `src/App.tsx` is built to host the later scenes without a
+rewrite: register a component in `SCENES` and navigate with `goTo('<id>')`.

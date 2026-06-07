@@ -1,0 +1,336 @@
+/* ---------- Reset & base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Design tokens (palette, fonts, card colours) live in theme.css. */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(circle at 50% 18%, var(--bg-glow) 0%, var(--bg) 70%);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* ---------- App layout ---------- */
+.app {
+  /* Fill the small-viewport height so the board can size to fit; allow scroll
+     only as a safety net so nothing is ever clipped out of reach. */
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  padding: max(0.6rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+    max(0.6rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+}
+
+/* ---------- HUD ---------- */
+.hud {
+  text-align: center;
+  padding: clamp(0.5rem, 2vh, 1.25rem) 0 clamp(0.4rem, 1.5vh, 0.9rem);
+}
+
+.hud__title {
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.hud__subtitle,
+.hud__stats {
+  margin-top: 0.35rem;
+  color: var(--ink-dim);
+  font-size: clamp(0.8rem, 2.4vw, 1rem);
+  font-style: italic;
+}
+
+.hud__stats {
+  font-style: normal;
+  letter-spacing: 0.03em;
+}
+
+.hud__dot {
+  margin: 0 0.5rem;
+  opacity: 0.6;
+}
+
+/* ---------- Stage / Board ---------- */
+.stage {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2.5vh, 1.5rem);
+}
+
+/*
+ * The board sizes a single card to the largest 3:4 tile that fits BOTH the
+ * available width and the available height. `--reserve` is the vertical space
+ * left for the HUD, the preview CTA and paddings, so the whole screen fits
+ * without clipping.
+ */
+.board {
+  --cols: 4;
+  --rows: 3;
+  --reserve: 13.5rem;
+  --avail-w: min(94vw, 760px);
+  --avail-h: calc(100svh - var(--reserve));
+  --card-by-w: calc((var(--avail-w) - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  --card-by-h: calc(
+    ((var(--avail-h) - (var(--rows) - 1) * var(--gap)) / var(--rows)) * 3 / 4
+  );
+  --card: max(56px, min(var(--card-by-w), var(--card-by-h)));
+
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--card));
+  justify-content: center;
+  gap: var(--gap);
+}
+
+/* ---------- Card ---------- */
+.card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  perspective: 800px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.card:disabled {
+  cursor: default;
+}
+
+.card__inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.45s ease;
+}
+
+.card.is-faceup .card__inner {
+  transform: rotateY(180deg);
+}
+
+.card__face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.card__back {
+  background: linear-gradient(160deg, var(--card-back) 0%, #232730 100%);
+  border: 1px solid var(--card-back-edge);
+}
+
+.card__back::after {
+  content: '';
+  width: 38%;
+  height: 38%;
+  border-radius: 50%;
+  border: 1px solid rgba(236, 233, 226, 0.14);
+}
+
+.card__front {
+  transform: rotateY(180deg);
+  background: var(--card-colour, #555);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.08);
+}
+
+.card__icon {
+  width: 64%;
+  height: 64%;
+  color: rgba(20, 18, 16, 0.82);
+  display: flex;
+}
+
+.card__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Matched cards fade away but keep their slot so the grid never reshuffles. */
+.card.is-matched {
+  pointer-events: none;
+}
+
+.card.is-matched .card__inner {
+  opacity: 0;
+  transform: rotateY(180deg) scale(0.9);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.card:not(:disabled):hover .card__inner {
+  transform: translateY(-3px);
+}
+
+.card.is-faceup:not(:disabled):hover .card__inner {
+  transform: rotateY(180deg) translateY(-3px);
+}
+
+/* ---------- Preview CTA ---------- */
+.preview-cta {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.6rem, 2vh, 1rem);
+}
+
+.preview-cta__text {
+  color: var(--ink-dim);
+  font-style: italic;
+  font-size: clamp(0.9rem, 2.6vw, 1.1rem);
+}
+
+/* ---------- Buttons ---------- */
+.button {
+  appearance: none;
+  border: 1px solid rgba(236, 233, 226, 0.45);
+  background: transparent;
+  color: var(--ink);
+  font-size: clamp(0.95rem, 2.6vw, 1.1rem);
+  letter-spacing: 0.06em;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  background: rgba(236, 233, 226, 0.1);
+  border-color: var(--ink);
+  outline: none;
+}
+
+/* ---------- Overlays (story + end) ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: max(2rem, env(safe-area-inset-top)) 1.5rem
+    max(2rem, env(safe-area-inset-bottom));
+  background: rgba(12, 12, 16, 0.92);
+  backdrop-filter: blur(3px);
+  animation: fade-in 0.6s ease both;
+  z-index: 10;
+}
+
+.story {
+  cursor: pointer;
+}
+
+.story__text p {
+  font-size: clamp(1.3rem, 5.5vw, 2.1rem);
+  font-style: italic;
+  line-height: 1.5;
+  max-width: 22ch;
+  margin: 0 auto;
+  color: var(--ink);
+}
+
+.story__text p + p {
+  margin-top: 0.4rem;
+  color: var(--ink-dim);
+}
+
+.overlay__hint {
+  position: absolute;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.end__line {
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+  font-weight: 500;
+}
+
+.end__count {
+  color: var(--ink-dim);
+  font-style: italic;
+  font-size: clamp(0.95rem, 3vw, 1.15rem);
+  max-width: 26ch;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* ---------- Responsive: portrait / narrow reflows to 3 columns x 4 rows ---------- */
+@media (orientation: portrait), (max-width: 540px) {
+  .board {
+    --cols: 3;
+    --rows: 4;
+    --reserve: 12.5rem;
+    --avail-w: min(92vw, 460px);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .card__inner,
+  .card.is-matched .card__inner {
+    transition-duration: 0.001ms;
+  }
+  .overlay {
+    animation-duration: 0.001ms;
+  }
+  .overlay__hint {
+    animation: none;
+  }
+}
