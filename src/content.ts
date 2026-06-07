@@ -133,4 +133,33 @@ export const content = {
     boardLabel: 'Memory board',
     faceDownLabel: 'Face-down card',
   },
+
+  /** Title screen. The title/tagline above are reused here. */
+  intro: {
+    beginButton: 'Begin',
+    beginHint: 'press space to begin',
+  },
+
+  /** World map — a short SMB3-style walk along a path to the house. */
+  worldMap: {
+    caption: 'You are a long way from home.',
+    walkOn: 'Walk on',
+    enterLabel: 'Enter the house',
+    walkHint: 'click the path, or press space, to walk on',
+    ariaLabel: 'A path leading to a small house',
+  },
+
+  /**
+   * House / NPC conversation. Gentle, a little strange, never over-explaining.
+   * Each line is one dialogue beat; the last leads into the card preview.
+   */
+  house: {
+    speaker: '',
+    lines: [
+      'You have come a long way.',
+      'This is not your home.\nBut something of it may still be here.',
+      'You may look for as long as you want.\nOnce you begin, only half will return.',
+    ],
+    continueHint: 'tap, or press space, to continue',
+  },
 } as const

@@ -18,7 +18,7 @@ function newPreviewCards(): Card[] {
 }
 
 /**
- * The memory card game. Self-contained for Phase 0: it owns its preview →
+ * The memory card game. Self-contained: it owns its preview →
  * playing → story → end loop and restarts in place. Phase 5 will route the end
  * state out via `goTo('ending')` instead of showing EndScreen here.
  * It takes no props yet but stays assignable to ComponentType<SceneProps>.
