@@ -126,8 +126,8 @@ export const content = {
     {
       id: 'red',
       label: 'Red',
-      meaning: 'anger / frustration',
-      story: "I still feel the anger.\nI can't always see what it was for.",
+      meaning: 'frustration',
+      story: "I still feel the frustration.\nI can't always see what it was for.",
     },
     {
       id: 'grey',
