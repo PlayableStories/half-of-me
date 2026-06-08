@@ -40,6 +40,7 @@ npm run preview    # preview the production build
 | `src/components/` | Board, CardView, Hud, StoryOverlay, EndScreen |
 | `src/scenes/` | Scene manager types + scenes (`Title`, `WorldMap`, `House`, `CardGame`) |
 | `src/icons/` | Per-object line-art SVGs |
+| `src/assets/audio/` | Audio assets (fire crackle loop) |
 
 ## Roadmap (see the GDD)
 
@@ -52,3 +53,11 @@ npm run preview    # preview the production build
 
 The scene manager in `src/App.tsx` is built to host the later scenes without a
 rewrite: register a component in `SCENES` and navigate with `goTo('<id>')`.
+
+## Credits
+
+- **Fire crackle loop** (`src/assets/audio/fire-loop.*`) — "Fireplace Sound Loop"
+  by **PagDev**, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
+  via [OpenGameArt](https://opengameart.org/content/fireplace-sound-loop).
+  Trimmed and re-encoded to a seamless `webm`/`mp3` loop. CC0 requires no
+  attribution; credited here with thanks.

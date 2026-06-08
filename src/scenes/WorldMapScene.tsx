@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { content } from '../content'
+import { playFailBeep } from '../audio/failBeep'
 import type { SceneProps } from './types'
 
 /**
@@ -108,7 +109,13 @@ export function WorldMapScene({ goTo }: SceneProps) {
 
   function stepTo(targetId: NodeId) {
     if (walkingRef.current) return
-    if (!openNeighbours(current).includes(targetId)) return
+    if (!openNeighbours(current).includes(targetId)) {
+      // Beep when the blocked move is a gated edge that's currently closed
+      // (the gap↔other-side crossing before the key, or after crossing back).
+      const lock = edgeLock(current, targetId)
+      if (lock && !isEdgeOpen(current, targetId)) playFailBeep()
+      return
+    }
     const from = NODE_BY_ID[current]
     const to = NODE_BY_ID[targetId]
     // The gap↔other-side step is "flown": show the traveller as a plane.
@@ -156,7 +163,9 @@ export function WorldMapScene({ goTo }: SceneProps) {
     const cur = NODE_BY_ID[current]
     let best: NodeId | null = null
     let bestScore = 0.5 // require a clear match, not a near-perpendicular one
-    for (const nId of openNeighbours(current)) {
+    // All neighbours, not just open ones: stepTo() rejects a closed edge and
+    // beeps, so pressing toward the shut gap↔other-side path gives feedback.
+    for (const nId of neighbours(current)) {
       const n = NODE_BY_ID[nId]
       const vx = n.x - cur.x
       const vy = n.y - cur.y
