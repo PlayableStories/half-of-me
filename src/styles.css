@@ -406,6 +406,8 @@ button {
 }
 
 .worldmap__label {
+  /* Hidden on the map for now; markup/data kept for a later map pass. */
+  display: none;
   fill: var(--ink-dim);
   font-family: var(--font-serif);
   font-style: italic;

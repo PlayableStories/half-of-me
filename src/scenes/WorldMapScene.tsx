@@ -30,8 +30,13 @@ const NODES: MapNode[] = [
   { id: 'woods', x: 38, y: 18 },
   { id: 'bridge', x: 66, y: 18 },
   { id: 'well', x: 38, y: 44 },
-  { id: 'house', x: 72, y: 44 },
+  { id: 'house', x: 80, y: 44 },
 ]
+
+/** Visual radius of a node, used to stop edges short so they don't overlap it. */
+function nodeRadius(id: NodeId) {
+  return id === 'house' ? 6.5 : 3
+}
 
 const EDGES: [NodeId, NodeId][] = [
   ['road', 'woods'],
@@ -220,14 +225,17 @@ export function WorldMapScene({ goTo }: SceneProps) {
         {EDGES.map(([a, b]) => {
           const na = NODE_BY_ID[a]
           const nb = NODE_BY_ID[b]
+          const len = Math.hypot(nb.x - na.x, nb.y - na.y) || 1
+          const ux = (nb.x - na.x) / len
+          const uy = (nb.y - na.y) / len
           const locked = !isEdgeOpen(a, b)
           return (
             <line
               key={`${a}-${b}`}
-              x1={na.x}
-              y1={na.y}
-              x2={nb.x}
-              y2={nb.y}
+              x1={na.x + ux * nodeRadius(a)}
+              y1={na.y + uy * nodeRadius(a)}
+              x2={nb.x - ux * nodeRadius(b)}
+              y2={nb.y - uy * nodeRadius(b)}
               className={`worldmap__edge ${locked ? 'is-locked' : ''}`}
             />
           )
@@ -250,14 +258,18 @@ export function WorldMapScene({ goTo }: SceneProps) {
               onClick={() => onNodeClick(n.id)}
             >
               {isHouse ? (
-                <g
-                  transform={`translate(${n.x} ${n.y})`}
-                  className={`worldmap__house ${cls}`}
-                >
-                  <path d="M -4 1 L 0 -4 L 4 1" />
-                  <path d="M -3 0.5 V 5 H 3 V 0.5" />
-                  <rect x="-1" y="2" width="2" height="3" />
-                </g>
+                <>
+                  {/* invisible hit area: the stroke-only house is hard to click */}
+                  <circle cx={n.x} cy={n.y} r={7} fill="transparent" />
+                  <g
+                    transform={`translate(${n.x} ${n.y})`}
+                    className={`worldmap__house ${cls}`}
+                  >
+                    <path d="M -4 1 L 0 -4 L 4 1" />
+                    <path d="M -3 0.5 V 5 H 3 V 0.5" />
+                    <rect x="-1" y="2" width="2" height="3" />
+                  </g>
+                </>
               ) : (
                 <circle cx={n.x} cy={n.y} r={2} className={cls} />
               )}
