@@ -380,7 +380,7 @@ button {
   opacity: 0.5;
 }
 
-/* A locked path: greyed out until its prerequisite node is visited. */
+/* A locked path: greyed out while closed (before the key, or after crossing). */
 .worldmap__edge.is-locked {
   opacity: 0.15;
 }

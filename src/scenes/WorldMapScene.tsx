@@ -41,13 +41,17 @@ const EDGES: [NodeId, NodeId][] = [
 ]
 
 /**
- * Edges that stay closed until a prerequisite node has been visited. The path
- * from the gap (woods) to the other side (well) only opens once the traveller
- * has been to the key (bridge) — so the bridge is a required step, not a detour.
+ * Gated edges. `requires` keeps the edge closed until that node is visited;
+ * `closesAfter` re-closes it once that node is reached. The path from the gap
+ * (woods) to the other side (well) opens only after the key (bridge), then locks
+ * behind the traveller once they reach the other side — a one-way crossing.
  */
-const EDGE_LOCKS: { a: NodeId; b: NodeId; requires: NodeId }[] = [
-  { a: 'woods', b: 'well', requires: 'bridge' },
-]
+const EDGE_LOCKS: {
+  a: NodeId
+  b: NodeId
+  requires?: NodeId
+  closesAfter?: NodeId
+}[] = [{ a: 'woods', b: 'well', requires: 'bridge', closesAfter: 'well' }]
 
 function edgeLock(a: NodeId, b: NodeId) {
   return EDGE_LOCKS.find(
@@ -80,11 +84,16 @@ export function WorldMapScene({ goTo }: SceneProps) {
   const [visited, setVisited] = useState<Set<NodeId>>(() => new Set([start.id]))
   const walkingRef = useRef(false)
   const [walking, setWalking] = useState(false)
+  // True only while flying the gap↔other-side crossing (avatar shown as a plane).
+  const [crossing, setCrossing] = useState(false)
 
-  /** A locked edge is impassable until its prerequisite node is visited. */
+  /** Open unless still gated by `requires`, or already shut by `closesAfter`. */
   function isEdgeOpen(a: NodeId, b: NodeId) {
     const lock = edgeLock(a, b)
-    return !lock || visited.has(lock.requires)
+    if (!lock) return true
+    if (lock.requires && !visited.has(lock.requires)) return false
+    if (lock.closesAfter && visited.has(lock.closesAfter)) return false
+    return true
   }
 
   /** Neighbours reachable right now (locked edges excluded). */
@@ -97,12 +106,17 @@ export function WorldMapScene({ goTo }: SceneProps) {
     if (!openNeighbours(current).includes(targetId)) return
     const from = NODE_BY_ID[current]
     const to = NODE_BY_ID[targetId]
+    // The gap↔other-side step is "flown": show the traveller as a plane.
+    const crossingGap =
+      (current === 'woods' && targetId === 'well') ||
+      (current === 'well' && targetId === 'woods')
 
     const finish = () => {
       setCurrent(targetId)
       setVisited((prev) => new Set(prev).add(targetId))
       walkingRef.current = false
       setWalking(false)
+      setCrossing(false)
       // Arriving at the house ends the map: switch scenes immediately.
       if (targetId === 'house') goTo('house')
     }
@@ -115,6 +129,7 @@ export function WorldMapScene({ goTo }: SceneProps) {
 
     walkingRef.current = true
     setWalking(true)
+    if (crossingGap) setCrossing(true)
     let startTs: number | null = null
     function step(ts: number) {
       if (startTs === null) startTs = ts
@@ -253,13 +268,24 @@ export function WorldMapScene({ goTo }: SceneProps) {
           )
         })}
 
-        {/* the traveller */}
-        <circle
-          cx={pos.x}
-          cy={pos.y}
-          r={1.9}
-          className={`worldmap__avatar ${walking ? 'is-walking' : ''}`}
-        />
+        {/* the traveller — a dot, or a plane (nose south) flying the gap */}
+        {crossing ? (
+          <g
+            transform={`translate(${pos.x} ${pos.y})`}
+            className="worldmap__avatar worldmap__plane"
+          >
+            <path d="M0 3.4 C0.7 2 0.7 -2.4 0 -3.2 C-0.7 -2.4 -0.7 2 0 3.4 Z" />
+            <path d="M-3.4 0.9 L3.4 0.9 L1.1 -0.5 L-1.1 -0.5 Z" />
+            <path d="M-1.3 -2.3 L1.3 -2.3 L0.6 -3.1 L-0.6 -3.1 Z" />
+          </g>
+        ) : (
+          <circle
+            cx={pos.x}
+            cy={pos.y}
+            r={1.9}
+            className={`worldmap__avatar ${walking ? 'is-walking' : ''}`}
+          />
+        )}
       </svg>
 
       <p className="overlay__hint worldmap__hint">
