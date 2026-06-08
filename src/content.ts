@@ -191,11 +191,11 @@ export const content = {
     enterHint: 'press enter to go inside',
     ariaLabel: 'A map of paths leading to a small house',
     places: {
-      road: 'the road',
-      woods: 'the woods',
-      bridge: 'the bridge',
-      well: 'the well',
-      house: 'the house',
+      road: 'the past',
+      woods: 'the gap',
+      bridge: 'the key',
+      well: 'the other side',
+      house: 'the present',
     },
   },
 

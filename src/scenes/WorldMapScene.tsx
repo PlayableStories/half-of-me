@@ -7,7 +7,8 @@ import type { SceneProps } from './types'
  * The traveller steps node-to-node with the arrow keys (or WASD, or by clicking
  * an adjacent node). The woods branch — right to the bridge (a dead-end detour)
  * or down toward the house — so there's a real choice and you can walk around
- * and backtrack. Stepping onto the house and pressing Enter goes inside.
+ * and backtrack. Arriving on the house switches to the house scene at once —
+ * no button, no extra keypress.
  *
  * Deliberately one short scene, not a large explorable map (GDD §8). The SMB3
  * reference is structural, not literal.
@@ -39,6 +40,21 @@ const EDGES: [NodeId, NodeId][] = [
   ['well', 'house'],
 ]
 
+/**
+ * Edges that stay closed until a prerequisite node has been visited. The path
+ * from the gap (woods) to the other side (well) only opens once the traveller
+ * has been to the key (bridge) — so the bridge is a required step, not a detour.
+ */
+const EDGE_LOCKS: { a: NodeId; b: NodeId; requires: NodeId }[] = [
+  { a: 'woods', b: 'well', requires: 'bridge' },
+]
+
+function edgeLock(a: NodeId, b: NodeId) {
+  return EDGE_LOCKS.find(
+    (l) => (l.a === a && l.b === b) || (l.a === b && l.b === a),
+  )
+}
+
 const NODE_BY_ID = Object.fromEntries(NODES.map((n) => [n.id, n])) as Record<
   NodeId,
   MapNode
@@ -65,11 +81,20 @@ export function WorldMapScene({ goTo }: SceneProps) {
   const walkingRef = useRef(false)
   const [walking, setWalking] = useState(false)
 
-  const atHouse = current === 'house'
+  /** A locked edge is impassable until its prerequisite node is visited. */
+  function isEdgeOpen(a: NodeId, b: NodeId) {
+    const lock = edgeLock(a, b)
+    return !lock || visited.has(lock.requires)
+  }
+
+  /** Neighbours reachable right now (locked edges excluded). */
+  function openNeighbours(id: NodeId) {
+    return neighbours(id).filter((n) => isEdgeOpen(id, n))
+  }
 
   function stepTo(targetId: NodeId) {
     if (walkingRef.current) return
-    if (!neighbours(current).includes(targetId)) return
+    if (!openNeighbours(current).includes(targetId)) return
     const from = NODE_BY_ID[current]
     const to = NODE_BY_ID[targetId]
 
@@ -78,6 +103,8 @@ export function WorldMapScene({ goTo }: SceneProps) {
       setVisited((prev) => new Set(prev).add(targetId))
       walkingRef.current = false
       setWalking(false)
+      // Arriving at the house ends the map: switch scenes immediately.
+      if (targetId === 'house') goTo('house')
     }
 
     if (prefersReducedMotion()) {
@@ -109,7 +136,7 @@ export function WorldMapScene({ goTo }: SceneProps) {
     const cur = NODE_BY_ID[current]
     let best: NodeId | null = null
     let bestScore = 0.5 // require a clear match, not a near-perpendicular one
-    for (const nId of neighbours(current)) {
+    for (const nId of openNeighbours(current)) {
       const n = NODE_BY_ID[nId]
       const vx = n.x - cur.x
       const vy = n.y - cur.y
@@ -123,12 +150,8 @@ export function WorldMapScene({ goTo }: SceneProps) {
     if (best) stepTo(best)
   }
 
-  function enterHouse() {
-    if (!walkingRef.current && atHouse) goTo('house')
-  }
-
-  // Keyboard: arrows / WASD walk; Enter or Space enters the house when on it.
-  // Re-bound each render so it reads the latest current/walking state.
+  // Keyboard: arrows / WASD walk. Arriving on the house auto-advances, so there
+  // is no enter/confirm key. Re-bound each render to read the latest state.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       switch (e.key) {
@@ -156,11 +179,6 @@ export function WorldMapScene({ goTo }: SceneProps) {
           e.preventDefault()
           walkDir(0, 1)
           break
-        case 'Enter':
-        case ' ':
-          e.preventDefault()
-          enterHouse()
-          break
       }
     }
     window.addEventListener('keydown', onKey)
@@ -168,8 +186,7 @@ export function WorldMapScene({ goTo }: SceneProps) {
   })
 
   function onNodeClick(id: NodeId) {
-    if (id === current) enterHouse()
-    else stepTo(id)
+    stepTo(id)
   }
 
   const { places } = content.worldMap
@@ -188,6 +205,7 @@ export function WorldMapScene({ goTo }: SceneProps) {
         {EDGES.map(([a, b]) => {
           const na = NODE_BY_ID[a]
           const nb = NODE_BY_ID[b]
+          const locked = !isEdgeOpen(a, b)
           return (
             <line
               key={`${a}-${b}`}
@@ -195,7 +213,7 @@ export function WorldMapScene({ goTo }: SceneProps) {
               y1={na.y}
               x2={nb.x}
               y2={nb.y}
-              className="worldmap__edge"
+              className={`worldmap__edge ${locked ? 'is-locked' : ''}`}
             />
           )
         })}
@@ -244,13 +262,8 @@ export function WorldMapScene({ goTo }: SceneProps) {
         />
       </svg>
 
-      {atHouse ? (
-        <button type="button" className="button" onClick={enterHouse}>
-          {content.worldMap.enterLabel}
-        </button>
-      ) : null}
       <p className="overlay__hint worldmap__hint">
-        {atHouse ? content.worldMap.enterHint : content.worldMap.walkHint}
+        {content.worldMap.walkHint}
       </p>
     </main>
   )

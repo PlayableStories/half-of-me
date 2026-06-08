@@ -380,6 +380,11 @@ button {
   opacity: 0.5;
 }
 
+/* A locked path: greyed out until its prerequisite node is visited. */
+.worldmap__edge.is-locked {
+  opacity: 0.15;
+}
+
 .worldmap__place {
   cursor: pointer;
 }
