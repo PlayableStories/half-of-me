@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { content } from '../content'
 import type { Card } from '../game/types'
-import { COLOUR_LABELS, OBJECT_LABELS } from '../game/deck'
+import { COLOUR_LABELS, MEMBER_LABELS } from '../game/deck'
 import { ObjectIcon } from '../icons'
 
 interface CardViewProps {
@@ -14,7 +14,7 @@ export function CardView({ card, disabled, onSelect }: CardViewProps) {
   const faceUp = card.state === 'faceup'
   const matched = card.state === 'matched'
 
-  const label = `${COLOUR_LABELS[card.colour]} ${OBJECT_LABELS[card.object]}`
+  const label = `${COLOUR_LABELS[card.colour]} ${MEMBER_LABELS[card.member]}`
 
   return (
     <button
@@ -29,7 +29,7 @@ export function CardView({ card, disabled, onSelect }: CardViewProps) {
         <span className="card__face card__back" aria-hidden="true" />
         <span className="card__face card__front">
           <span className="card__icon">
-            <ObjectIcon object={card.object} />
+            <ObjectIcon member={card.member} />
           </span>
         </span>
       </span>
