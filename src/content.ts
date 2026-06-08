@@ -22,9 +22,10 @@ export const content = {
   /** Shown as the game title (and the browser tab). */
   title: 'Half of Me',
   /** Small subtitle under the title. */
-  tagline: 'a home that only returns in fragments',
+  tagline: 'a place I only reach now in dreams',
   /** Line shown beneath the deck during the face-up preview phase. */
-  previewCaption: 'Look as long as you like. Once you begin, only half returns.',
+  previewCaption:
+    'Look as long as you like. Once I begin to remember, only half comes back.',
   /** Label on the button that starts the game. */
   startButton: 'Start remembering',
 
@@ -166,7 +167,7 @@ export const content = {
     endTitle: 'I found half of home.',
     endComplete: 'The other half stayed there.',
     endPartial:
-      "{remembered} of {total} fragments returned. The rest wouldn't connect.",
+      'I brought {remembered} of {total} back. The rest would not come together.',
     playAgain: 'Remember again',
     boardLabel: 'Memory board',
     faceDownLabel: 'Face-down card',
@@ -190,11 +191,11 @@ export const content = {
     enterHint: 'press enter to go inside',
     ariaLabel: 'A map of paths leading to a small house',
     places: {
-      road: 'the road',
-      woods: 'the woods',
-      bridge: 'the bridge',
-      well: 'the well',
-      house: 'the house',
+      road: 'the past',
+      woods: 'the gap',
+      bridge: 'the key',
+      well: 'the other side',
+      house: 'the present',
     },
   },
 
@@ -205,9 +206,9 @@ export const content = {
   house: {
     speaker: '',
     lines: [
-      'You have come a long way.',
-      'This is not your home.\nBut something of it may still be here.',
-      'You may look for as long as you want.\nOnce you begin, only half will return.',
+      'You came a long way back.',
+      'This is not your home.\nBut something of one is still here, under the ash.',
+      'Look as long as you like.\nWhat returns will return halved — the place, or the feeling. Never both at once.',
     ],
     continueHint: 'tap, or press space, to continue',
   },

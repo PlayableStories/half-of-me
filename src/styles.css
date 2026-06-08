@@ -380,6 +380,11 @@ button {
   opacity: 0.5;
 }
 
+/* A locked path: greyed out while closed (before the key, or after crossing). */
+.worldmap__edge.is-locked {
+  opacity: 0.15;
+}
+
 .worldmap__place {
   cursor: pointer;
 }
@@ -401,6 +406,8 @@ button {
 }
 
 .worldmap__label {
+  /* Hidden on the map for now; markup/data kept for a later map pass. */
+  display: none;
   fill: var(--ink-dim);
   font-family: var(--font-serif);
   font-style: italic;
