@@ -168,6 +168,11 @@ export const content = {
     endComplete: 'The other half stayed there.',
     endPartial:
       'I brought {remembered} of {total} back. The rest would not come together.',
+    // Ending CTA — bridges the personal poem to real accounts of displacement.
+    endCtaText:
+      'This was one story. Around the world, disaster — natural and human — uproots millions from the place they call home.',
+    endCtaButton: 'Read real stories of displacement',
+    endCtaUrl: 'https://climatedisasterproject.com/stories-archive/',
     playAgain: 'Remember again',
     boardLabel: 'Memory board',
     faceDownLabel: 'Face-down card',

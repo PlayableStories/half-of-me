@@ -241,6 +241,21 @@ button {
   outline: none;
 }
 
+/* Filled emphasis variant — used for the ending CTA. */
+.button--primary {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  text-decoration: none;
+}
+
+.button--primary:hover,
+.button--primary:focus-visible {
+  background: #fff;
+  border-color: #fff;
+  color: var(--bg);
+}
+
 /* ---------- Overlays (story + end) ---------- */
 .overlay {
   position: fixed;
@@ -297,6 +312,13 @@ button {
   font-style: italic;
   font-size: clamp(0.95rem, 3vw, 1.15rem);
   max-width: 26ch;
+}
+
+.end__cta-text {
+  color: var(--ink-dim);
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  line-height: 1.5;
+  max-width: 34ch;
 }
 
 @keyframes fade-in {
