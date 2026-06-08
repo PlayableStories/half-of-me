@@ -146,12 +146,15 @@ function Fireplace() {
   )
 }
 
-function Tv() {
+function ChristmasTree() {
   return (
     <svg {...common}>
-      <rect x="24" y="36" width="52" height="36" rx="3" />
-      <path d="M40 72 V78 H60 V72" />
-      <path d="M42 36 L33 24 M58 36 L67 24" />
+      {/* star topper */}
+      <path d="M50 3 L52.5 8.5 L58 11 L52.5 13.5 L50 19 L47.5 13.5 L42 11 L47.5 8.5 Z" />
+      {/* three-tier tree */}
+      <path d="M50 22 L37 42 L44 42 L31 60 L39 60 L25 78 L75 78 L61 60 L69 60 L56 42 L63 42 Z" />
+      {/* trunk */}
+      <path d="M44 78 V87 H56 V78" />
     </svg>
   )
 }
@@ -168,7 +171,7 @@ const ICONS: Record<MemberType, () => ReactElement> = {
   ferriswheel: FerrisWheel,
   ferry: Ferry,
   fireplace: Fireplace,
-  tv: Tv,
+  tree: ChristmasTree,
 }
 
 export function ObjectIcon({ member }: { member: MemberType }) {

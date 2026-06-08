@@ -92,12 +92,12 @@ export const content = {
     },
     {
       id: 'hearth',
-      label: 'Fireplace & TV',
+      label: 'Fireplace & Christmas tree',
       story:
         'They say a fire crackling sounds like home.\nI could never make it mean anything warm.',
       members: [
         { id: 'fireplace', label: 'Fireplace' },
-        { id: 'tv', label: 'TV' },
+        { id: 'tree', label: 'Christmas tree' },
       ],
     },
   ],
@@ -155,7 +155,7 @@ export const content = {
     ['ferriswheel', 'yellow'],
     ['ferry', 'grey'],
     ['fireplace', 'red'],
-    ['tv', 'grey'],
+    ['tree', 'grey'],
   ],
 
   /** Miscellaneous UI strings. `{remembered}` / `{total}` are filled at runtime. */
