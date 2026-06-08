@@ -12,6 +12,8 @@ export function Hud({ phase, moves, matchedPairs, totalPairs }: HudProps) {
   const { ui } = content
   return (
     <header className="hud">
+      {/* Title and tagline are hidden in the card scene (see styles.css) but
+          kept in the DOM for document structure / screen readers. */}
       <h1 className="hud__title">{content.title}</h1>
       {phase === 'playing' || phase === 'story' ? (
         <p className="hud__stats">

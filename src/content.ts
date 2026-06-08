@@ -25,7 +25,7 @@ export const content = {
   tagline: 'a place I only reach now in dreams',
   /** Line shown beneath the deck during the face-up preview phase. */
   previewCaption:
-    'Look as long as you like. Once I begin to remember, only half comes back.',
+    "Look as long as you like. The associations you catch now are the clues I'll remember them by.",
   /** Label on the button that starts the game. */
   startButton: 'Start remembering',
 
@@ -208,7 +208,7 @@ export const content = {
     lines: [
       'You came a long way back.',
       'This is not your home.\nBut something of one is still here, under the ash.',
-      'Look as long as you like.\nWhat returns will return halved — the place, or the feeling. Never both at once.',
+      'What returns will return halved — the place, or the feeling. Never both at once.',
     ],
     continueHint: 'tap, or press space, to continue',
   },
