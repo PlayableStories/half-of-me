@@ -7,6 +7,7 @@ import { Board } from '../components/Board'
 import { Hud } from '../components/Hud'
 import { StoryOverlay } from '../components/StoryOverlay'
 import { EndScreen } from '../components/EndScreen'
+import type { SceneProps } from './types'
 
 const TOTAL_PAIRS = content.deck.length / 2
 const REVEAL_MATCH_MS = 700
@@ -18,12 +19,12 @@ function newPreviewCards(): Card[] {
 }
 
 /**
- * The memory card game. Self-contained: it owns its preview →
- * playing → story → end loop and restarts in place. Phase 5 will route the end
- * state out via `goTo('ending')` instead of showing EndScreen here.
- * It takes no props yet but stays assignable to ComponentType<SceneProps>.
+ * The memory card game. It owns its preview → playing → story → end loop.
+ * "Remember again" on the end screen returns to the title page (a fresh scene
+ * mounts when the player walks back through the flow). Phase 5 will route the
+ * end state out via `goTo('ending')` instead of showing EndScreen here.
  */
-export function CardGameScene() {
+export function CardGameScene({ goTo }: SceneProps) {
   const [cards, setCards] = useState<Card[]>(newPreviewCards)
   const [phase, setPhase] = useState<GamePhase>('preview')
   const [selected, setSelected] = useState<string[]>([])
@@ -92,15 +93,6 @@ export function CardGameScene() {
     }
   }
 
-  function restart() {
-    setCards(newPreviewCards())
-    setPhase('preview')
-    setSelected([])
-    setCurrentMatch(null)
-    setMoves(0)
-    setInputLocked(false)
-  }
-
   return (
     <>
       <Hud
@@ -135,7 +127,7 @@ export function CardGameScene() {
         <EndScreen
           remembered={matchedPairs}
           total={TOTAL_PAIRS}
-          onRestart={restart}
+          onRestart={() => goTo('title')}
         />
       )}
     </>

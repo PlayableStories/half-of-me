@@ -65,6 +65,13 @@ button {
   letter-spacing: 0.03em;
 }
 
+/* Hidden in the card scene, but kept in the DOM (markup/data preserved).
+   Delete this rule to show the title and tagline again. */
+.hud__title,
+.hud__subtitle {
+  display: none;
+}
+
 .hud__dot {
   margin: 0 0.5rem;
   opacity: 0.6;

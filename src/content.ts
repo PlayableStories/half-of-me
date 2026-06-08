@@ -25,7 +25,7 @@ export const content = {
   tagline: 'a place I only reach now in dreams',
   /** Line shown beneath the deck during the face-up preview phase. */
   previewCaption:
-    'Look as long as you like. Once I begin to remember, only half comes back.',
+    "Look as long as you like. The associations you catch now are the clues I'll remember them by.",
   /** Label on the button that starts the game. */
   startButton: 'Start remembering',
 
@@ -92,12 +92,12 @@ export const content = {
     },
     {
       id: 'hearth',
-      label: 'Fireplace & TV',
+      label: 'Fireplace & Christmas tree',
       story:
         'They say a fire crackling sounds like home.\nI could never make it mean anything warm.',
       members: [
         { id: 'fireplace', label: 'Fireplace' },
-        { id: 'tv', label: 'TV' },
+        { id: 'tree', label: 'Christmas tree' },
       ],
     },
   ],
@@ -126,8 +126,8 @@ export const content = {
     {
       id: 'red',
       label: 'Red',
-      meaning: 'anger / frustration',
-      story: "I still feel the anger.\nI can't always see what it was for.",
+      meaning: 'frustration',
+      story: "I still feel the frustration.\nI can't always see what it was for.",
     },
     {
       id: 'grey',
@@ -155,7 +155,7 @@ export const content = {
     ['ferriswheel', 'yellow'],
     ['ferry', 'grey'],
     ['fireplace', 'red'],
-    ['tv', 'grey'],
+    ['tree', 'grey'],
   ],
 
   /** Miscellaneous UI strings. `{remembered}` / `{total}` are filled at runtime. */
@@ -208,7 +208,7 @@ export const content = {
     lines: [
       'You came a long way back.',
       'This is not your home.\nBut something of one is still here, under the ash.',
-      'Look as long as you like.\nWhat returns will return halved — the place, or the feeling. Never both at once.',
+      'What returns will return halved — the place, or the feeling. Never both at once.',
     ],
     continueHint: 'tap, or press space, to continue',
   },
