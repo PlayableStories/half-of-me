@@ -1,111 +1,75 @@
 # Half of Me
 
-A short game poem about leaving home and remembering it incompletely. It uses a
-memory card game where two cards match if they share **either** the same object
-**or** the same colour — so every match returns only *half* a memory: the thing
-without the feeling, or the feeling without the thing.
+*A short game poem about leaving home and remembering it incompletely.*
 
 > You can remember where home was, or how it felt. Not both.
 
-Half of Me is a fresh "Level 2" rebuild that takes its core mechanic from the
-[Memory of Home](https://github.com/PlayableStories/memory-of-home) prototype and
-develops it into a more complete game poem (title, world map, house/NPC framing,
-ending).
+## Artist statement
 
-## The idea
+Half of Me is about leaving the place you grew up in and discovering that memory
+returns it only in pieces. You can recall *where* something was, or *how it
+felt* — never both at once. The game makes that loss its rule.
 
-Half of Me is about leaving the place you grew up in and finding that memory
-gives it back only in pieces — you can recall *where* something was, or *how it
-felt*, never both at once. The game turns that into the rule you play by.
+It is played as a memory card game, but every match gives back only half a
+memory: the thing without the feeling, or the feeling without the thing. The
+fragments are drawn from my own writing about leaving home — a house I now see
+only in dreams, warm rain no outsider believed in, books that smell of ash.
+Remembering, here, is an act that completes nothing.
 
-The story fragments are drawn from the author's own writing about leaving home,
-so the deck is personal rather than generic: a house seen only in dreams, warm
-rain no outsider believed in, books that now smell of ash.
+## Content note
 
-## How it plays
+Quiet themes of loss, homesickness, and leaving home. No graphic or distressing
+content.
 
-A memory card game on a 12-card board. The cards are shown face up to study,
-then turned over; you flip two at a time looking for a match. Two cards match if
-they share **either**:
+## How to play
 
-- **the same theme** — the *thing* remembered. Each theme is one memory split
-  into two different cards (e.g. *Sun* & *Rain*, *Books* & *Pen*). Matching a
-  theme's two halves returns the place or object — but not the feeling.
-- **the same colour** — the *feeling* remembered. Four tones: yellow (warmth),
-  blue (distance), red (frustration), grey (numbness). Matching two cards of a
-  colour returns the feeling — but not where it belongs.
+A single sitting, about 5–10 minutes. No fail state, nothing to score.
 
-So every match gives back *half* a memory, and which half depends on how the two
-cards happened to connect. Theme takes priority when a pair shares both.
+You walk a short path to a house, are met by what is left of it, then play the
+memory game inside. The cards are shown face up to study, then turned over; you
+flip two at a time. Two cards match if they share **either** the same *theme*
+(the thing remembered) **or** the same *colour* (the feeling remembered) — so
+each match returns one half and withholds the other.
 
-**The deck.** 12 cards = 6 themes × 2 members, with 4 colours each appearing 3
-times. The two halves of a theme always carry different colours, so both kinds
-of match stay reachable and the board never deadlocks.
+**Controls:** click, or arrow keys / WASD to walk; click cards to flip; space or
+enter to advance text.
 
 ## The journey
-
-The game is framed as a short sequence, not a bare board:
 
 `title → world map → house → cards → ending`
 
 - **Title** — the name, and a fire crackling in the dark.
-- **World map** — a tiny SMB3-style overworld; you walk a gated path
+- **World map** — a small overworld; you walk a gated path
   (the past → the gap → the key → the other side → the present).
 - **House** — you arrive at a curtained window that speaks: not your home, but
   something of one left under the ash.
 - **Cards** — the memory game itself.
 - **Ending** — what you brought back, and what wouldn't come together.
 
-## Stack
+## Credits & licensing
 
-- React 18 + Vite + TypeScript
-- DOM + CSS for cards and scenes (no canvas / game engine)
-- **Node 24** (see `.nvmrc`)
+- **Design, writing, code & art** — William Wong. The poem and the line-art are
+  original to this work.
+- **Fire-crackle ambience** — "Fireplace Sound Loop" by **PagDev**,
+  [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) via
+  [OpenGameArt](https://opengameart.org/content/fireplace-sound-loop); trimmed
+  and re-encoded.
+- **Failure beep** — generated for this game (synthesized tone), no third-party
+  rights.
 
-## Develop
+All third-party assets are public domain (CC0); the work as a whole is
+distributable under CC BY 4.0.
+
+## Run it
+
+A web app (React + Vite + TypeScript). To run from source:
 
 ```bash
-nvm use            # Node 24
+nvm use            # Node 24 (see .nvmrc)
 npm install
-npm run dev        # dev server with hot reload
-npm run build      # typecheck (tsc -b) + production build
-npm run lint
+npm run dev        # local dev server
+npm run build      # production build → dist/
 npm run preview    # preview the production build
 ```
 
-## Where things live
-
-| Path | What |
-|------|------|
-| `src/content.ts` | All player-facing text + the 12-card deck (single source of truth) |
-| `src/theme.css` | Palette, card colours (`--colour-<id>`), fonts |
-| `src/styles.css` | Layout, card flip, overlays |
-| `src/game/` | Engine: deck, match logic, story lookup, types |
-| `src/components/` | Board, CardView, Hud, StoryOverlay, EndScreen |
-| `src/scenes/` | Scene manager types + scenes (`Title`, `WorldMap`, `House`, `CardGame`) |
-| `src/icons/` | Per-object line-art SVGs |
-| `src/assets/audio/` | Audio assets (fire crackle loop) |
-
-## Roadmap (see the GDD)
-
-- **Phase 1 — Foundation & playable card core** ✅
-- **Phase 2 — Title / world map / house / NPC framing scenes** ✅
-- **Phase 3 — Refined story fragments & framing copy** ✅
-- Phase 4 — Visual transformation (image → symbol) — *deferred*: cards use SVG
-  line-art, so there's no detailed image to degrade into a symbol; revisit if
-  detailed art is added.
-- Phase 5 — Dedicated ending scene — *deferred*: the current in-place end
-  screen is enough for now.
-- **Phase 6 — Polish (animation, sound, typography, layout)** — in progress
-  (audio started: title-scene fire ambience, map failure beep).
-
-The scene manager in `src/App.tsx` is built to host the later scenes without a
-rewrite: register a component in `SCENES` and navigate with `goTo('<id>')`.
-
-## Credits
-
-- **Fire crackle loop** (`src/assets/audio/fire-loop.*`) — "Fireplace Sound Loop"
-  by **PagDev**, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
-  via [OpenGameArt](https://opengameart.org/content/fireplace-sound-loop).
-  Trimmed and re-encoded to a seamless `webm`/`mp3` loop. CC0 requires no
-  attribution; credited here with thanks.
+The built `dist/` is a static site — open it in any modern browser.
