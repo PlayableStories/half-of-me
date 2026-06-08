@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { content } from '../content'
+import { startFireLoop, stopFireLoop } from '../audio/fireLoop'
 import type { SceneProps } from './types'
 
 /**
@@ -7,6 +8,12 @@ import type { SceneProps } from './types'
  * Begin via the button, Space, or Enter.
  */
 export function TitleScene({ goTo }: SceneProps) {
+  // Fire-crackle ambience plays only here; fade it out on leaving.
+  useEffect(() => {
+    startFireLoop()
+    return () => stopFireLoop()
+  }, [])
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === ' ' || e.key === 'Enter') {
