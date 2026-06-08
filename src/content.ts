@@ -7,11 +7,14 @@
  *  is mostly editing values here, plus the colours/fonts in `src/theme.css` and
  *  the icons in `src/icons/index.tsx`. You do not need to touch the engine.
  *
- *  The mechanic to preserve: two cards match if they share the same OBJECT or
+ *  The mechanic to preserve: two cards match if they share the same THEME or
  *  the same COLOUR. Each match reveals half a memory — the thing without the
- *  feeling (object match), or the feeling without the thing (colour match).
+ *  feeling (theme match), or the feeling without the thing (colour match).
  *
- *  NOTE: fragment wording here is the GDD's working text; Phase 3 refines it.
+ *  A THEME is one memory split into two different cards (its `members`) — e.g.
+ *  "Sun & rain" is a Sun card and a Rain card that match each other. Matching a
+ *  theme's two halves reveals that theme's fragment. The fragments below are
+ *  drawn from the author's own writing about leaving home.
  * ============================================================================
  */
 
@@ -26,42 +29,75 @@ export const content = {
   startButton: 'Start remembering',
 
   /**
-   * OBJECTS — the "things" on the cards. Each object appears twice in the deck.
-   *  - id:    internal slug, referenced by `deck` and the icon map.
-   *  - label: the player-visible name.
-   *  - story: shown on an OBJECT match — the thing remembered, the feeling lost.
-   *           ("\n" is a line break.)
+   * THEMES — each is one memory split into two different cards (`members`).
+   * A theme appears twice in the deck (once per member).
+   *  - id:      internal slug, referenced by `deck` (via its members) and matching.
+   *  - label:   the theme's name (used for accessibility, not shown on the board).
+   *  - story:   shown on a THEME match — the thing remembered, the feeling lost.
+   *             ("\n" is a line break.)
+   *  - members: the two cards that make up the theme; each has its own slug
+   *             (referenced by `deck` and the icon map) and player-visible label.
    */
   objects: [
     {
-      id: 'house',
-      label: 'House',
-      story: "I remember the house.\nI don't remember whether it was warm.",
+      id: 'home',
+      label: 'House & living room',
+      story:
+        "I remember the house exactly — the pictures, the sofa by the window.\nI only ever see it now when I'm asleep.",
+      members: [
+        { id: 'house', label: 'House' },
+        { id: 'livingroom', label: 'Living room' },
+      ],
     },
     {
-      id: 'trees',
-      label: 'Trees',
-      story: "I remember the trees outside.\nI don't remember the season.",
+      id: 'weather',
+      label: 'Sun & rain',
+      story:
+        "I remember the rain coming down warm.\nNo one who wasn't from there ever believed me.",
+      members: [
+        { id: 'sun', label: 'Sun' },
+        { id: 'rain', label: 'Rain' },
+      ],
     },
     {
-      id: 'dog',
-      label: 'Pet dog',
-      story: "I remember the dog waiting.\nI don't remember who came home first.",
+      id: 'library',
+      label: 'Books & pen',
+      story:
+        'I kept every book I ever owned, for the smell of the pages.\nThey smell of ash now.',
+      members: [
+        { id: 'books', label: 'Books' },
+        { id: 'pen', label: 'Pen' },
+      ],
     },
     {
-      id: 'table',
-      label: 'Dining table',
-      story: 'I remember the table.\nThe voices around it are missing.',
+      id: 'travel',
+      label: 'Arrival & departure',
+      story:
+        "I remember the clocks, the queues, the gates.\nThere was never enough time for goodbye — and I can't tell if I was arriving or leaving.",
+      members: [
+        { id: 'arrival', label: 'Arrival' },
+        { id: 'departure', label: 'Departure' },
+      ],
     },
     {
-      id: 'suitcase',
-      label: 'Suitcase',
-      story: "I remember the suitcase.\nI don't remember deciding to leave.",
+      id: 'harbour',
+      label: 'Carousel & ferry',
+      story:
+        'I remember the ferry, the carousel, the wind off the harbour.\nThe smoke from the chimney is still inside me.',
+      members: [
+        { id: 'carousel', label: 'Carousel' },
+        { id: 'ferry', label: 'Ferry' },
+      ],
     },
     {
-      id: 'photobook',
-      label: 'Photobook',
-      story: "I remember the photobook.\nI don't remember which picture was true.",
+      id: 'hearth',
+      label: 'Fireplace & TV',
+      story:
+        'They say a fire crackling sounds like home.\nI could never make it mean anything warm.',
+      members: [
+        { id: 'fireplace', label: 'Fireplace' },
+        { id: 'tv', label: 'TV' },
+      ],
     },
   ],
 
@@ -76,47 +112,49 @@ export const content = {
     {
       id: 'yellow',
       label: 'Yellow',
-      meaning: 'warmth / family / comfort',
-      story: "I remember warmth.\nI don't remember which room held it.",
+      meaning: 'warmth / comfort / being held',
+      story: 'I feel the warmth of being held.\nFor a moment I can put the rest down.',
     },
     {
       id: 'blue',
       label: 'Blue',
-      meaning: 'distance / sadness / separation',
-      story: "I remember distance.\nI don't remember when it began.",
+      meaning: 'distance / loneliness / freedom',
+      story:
+        "Looking back from this distance, I still feel it.\nI can't tell if it was loneliness or freedom.",
     },
     {
       id: 'red',
       label: 'Red',
-      meaning: 'love / conflict / urgency',
-      story: "I remember the urgency.\nI don't remember what we said.",
+      meaning: 'anger / frustration',
+      story: "I still feel the anger.\nI can't always see what it was for.",
     },
     {
       id: 'grey',
       label: 'Grey',
-      meaning: 'forgetting / dust / absence',
-      story: 'I remember absence.\nIt had no clear shape.',
+      meaning: 'numbness / absence / losing half of oneself',
+      story: 'Sometimes I feel nothing at all.\nLike half of me is missing.',
     },
   ],
 
   /**
-   * THE DECK — one [objectId, colourId] pair per card (GDD §12). Each object
-   * appears twice and each colour three times, so both object-matches and
-   * colour-matches are always possible. Keep the count even.
+   * THE DECK — one [memberId, colourId] pair per card. Each theme contributes
+   * its two members (so a theme appears twice) and each colour appears three
+   * times, so both theme-matches and colour-matches are always possible. The
+   * two halves of a theme carry different colours. Keep the count even.
    */
   deck: [
     ['house', 'yellow'],
-    ['house', 'blue'],
-    ['trees', 'blue'],
-    ['trees', 'red'],
-    ['dog', 'yellow'],
-    ['dog', 'grey'],
-    ['table', 'red'],
-    ['table', 'grey'],
-    ['suitcase', 'blue'],
-    ['suitcase', 'yellow'],
-    ['photobook', 'grey'],
-    ['photobook', 'red'],
+    ['livingroom', 'blue'],
+    ['sun', 'red'],
+    ['rain', 'blue'],
+    ['books', 'grey'],
+    ['pen', 'red'],
+    ['arrival', 'blue'],
+    ['departure', 'yellow'],
+    ['carousel', 'yellow'],
+    ['ferry', 'grey'],
+    ['fireplace', 'red'],
+    ['tv', 'grey'],
   ],
 
   /** Miscellaneous UI strings. `{remembered}` / `{total}` are filled at runtime. */
