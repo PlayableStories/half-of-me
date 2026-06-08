@@ -81,11 +81,11 @@ export const content = {
     },
     {
       id: 'harbour',
-      label: 'Carousel & ferry',
+      label: 'Ferris wheel & ferry',
       story:
-        'I remember the ferry, the carousel, the wind off the harbour.\nThe smoke from the chimney is still inside me.',
+        'I remember the ferry, the Ferris wheel, the wind off the harbour.\nThe smoke from the chimney is still inside me.',
       members: [
-        { id: 'carousel', label: 'Carousel' },
+        { id: 'ferriswheel', label: 'Ferris wheel' },
         { id: 'ferry', label: 'Ferry' },
       ],
     },
@@ -151,7 +151,7 @@ export const content = {
     ['pen', 'red'],
     ['arrival', 'blue'],
     ['departure', 'yellow'],
-    ['carousel', 'yellow'],
+    ['ferriswheel', 'yellow'],
     ['ferry', 'grey'],
     ['fireplace', 'red'],
     ['tv', 'grey'],

@@ -32,9 +32,11 @@ function House() {
 function LivingRoom() {
   return (
     <svg {...common}>
-      <path d="M26 62 V48 Q26 44 30 44 H70 Q74 44 74 48 V62" />
-      <path d="M22 62 Q22 56 28 56 H72 Q78 56 78 62 V70 H22 Z" />
-      <path d="M28 70 V76 M72 70 V76" />
+      <rect x="32" y="16" width="36" height="28" rx="1" />
+      <path d="M50 16 V44 M32 30 H68" />
+      <path d="M28 66 V56 Q28 52 32 52 H68 Q72 52 72 56 V66" />
+      <path d="M24 66 Q24 62 28 62 H72 Q76 62 76 66 V74 H24 Z" />
+      <path d="M30 74 V80 M70 74 V80" />
     </svg>
   )
 }
@@ -78,6 +80,7 @@ function Pen() {
       <path d="M66 30 L42 54" />
       <path d="M42 54 L36 68 L50 62 Z" />
       <path d="M58 28 L70 40" />
+      <path d="M30 73 L3 81" />
     </svg>
   )
 }
@@ -89,6 +92,7 @@ function Departure() {
     <svg {...common}>
       <path d="M22 60 L78 28 L54 72 L46 56 Z" />
       <path d="M46 56 L78 28" />
+      <path d="M24 80 H72" />
     </svg>
   )
 }
@@ -103,15 +107,16 @@ function Arrival() {
   )
 }
 
-// — Carousel & ferry —
+// — Ferris wheel & ferry —
 
-function Carousel() {
+function FerrisWheel() {
   return (
     <svg {...common}>
-      <path d="M50 20 L74 42 H26 Z" />
-      <circle cx="50" cy="20" r="2.5" fill="currentColor" />
-      <path d="M32 42 V70 M50 42 V70 M68 42 V70" />
-      <path d="M26 70 H74" />
+      <circle cx="50" cy="42" r="22" />
+      <circle cx="50" cy="42" r="2.5" fill="currentColor" />
+      <path d="M50 20 V64 M28 42 H72 M34 26 L66 58 M66 26 L34 58" />
+      <path d="M50 64 L40 80 M50 64 L60 80" />
+      <path d="M36 80 H64" />
     </svg>
   )
 }
@@ -132,8 +137,11 @@ function Ferry() {
 function Fireplace() {
   return (
     <svg {...common}>
-      <path d="M50 78 C36 71 36 55 46 45 C46 53 52 53 52 47 C52 37 48 31 56 25 C56 39 70 47 66 63 C63 73 56 78 50 78 Z" />
-      <path d="M50 73 C44 69 44 61 50 55 C52 61 58 63 54 71 C53 74 51 74 50 73 Z" />
+      <path d="M16 28 H84" />
+      <rect x="22" y="28" width="56" height="52" rx="2" />
+      <rect x="34" y="42" width="32" height="38" />
+      <path d="M50 79 C44 74 44 64 50 58 C50 63 55 63 55 58 C55 51 52 48 57 44 C57 52 64 58 61 68 C59 74 55 79 50 79 Z" />
+      <path d="M50 75 C46 72 46 66 50 62 C52 66 56 67 53 73 C52 75 51 75 50 75 Z" />
     </svg>
   )
 }
@@ -157,7 +165,7 @@ const ICONS: Record<MemberType, () => ReactElement> = {
   pen: Pen,
   arrival: Arrival,
   departure: Departure,
-  carousel: Carousel,
+  ferriswheel: FerrisWheel,
   ferry: Ferry,
   fireplace: Fireplace,
   tv: Tv,
