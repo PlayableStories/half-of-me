@@ -250,7 +250,6 @@ export function WorldMapScene({ goTo }: SceneProps) {
         {MAPS[map].nodes.map((n) => {
           const x = gx(n.col)
           const y = gy(n.row)
-          const visCls = visited.has(visitKey(map, n.id)) ? 'is-visited' : ''
           const curCls = currentId === n.id ? 'is-current' : ''
           const onClick = interactive ? () => stepTo(n.id) : undefined
 
@@ -275,7 +274,6 @@ export function WorldMapScene({ goTo }: SceneProps) {
             'worldmap__node',
             n.role === 'stair' ? 'is-stair' : '',
             n.role === 'key' ? 'is-key' : '',
-            visCls,
             curCls,
           ]
             .join(' ')

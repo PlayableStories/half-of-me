@@ -70,7 +70,11 @@ export function gy(row: number) {
 // ---- the two levels -------------------------------------------------------
 // Staircase coordinates are shared between the levels (same col,row) so the
 // traveller stays in place when changing level:
-//   S1 (2,6) — near stair    S2 (6,4) — far stair    S3 (6,1) — return stair
+//   S1 (2,6) near stair   S2 (6,4) far stair   S3 (6,1) return stair
+//   S4 (0,2) decoy stair  — hidden at the end of the near stair's basement
+//                           pocket; climbing it surfaces in an isolated dead
+//                           corner of the ground, so the near route only
+//                           reveals itself as a dead end after a round trip.
 //
 // Both levels are proper little mazes that spread across the 7×7 grid, with
 // several dead-ends. The near stair is one step from the start; the far stair
@@ -83,8 +87,6 @@ const GROUND: MazeMap = {
     { id: 'g1', col: 0, row: 4 },
     { id: 'g2', col: 2, row: 4 },
     { id: 'g3', col: 2, row: 2 },
-    { id: 'g4', col: 0, row: 2 },
-    { id: 'g5', col: 0, row: 0 }, // dead-end (top-left)
     { id: 'g6', col: 4, row: 2 },
     { id: 'g7', col: 4, row: 0 },
     { id: 'g8', col: 2, row: 0 }, // dead-end (top)
@@ -92,6 +94,9 @@ const GROUND: MazeMap = {
     { id: 'S2', col: 6, row: 4, role: 'stair' }, // far stair
     { id: 'g10', col: 4, row: 6 },
     { id: 'g11', col: 6, row: 6 }, // dead-end (bottom-right)
+    // Isolated decoy pocket — only reachable by climbing the decoy stair S4.
+    { id: 'S4', col: 0, row: 2, role: 'stair' },
+    { id: 'giso', col: 0, row: 0 }, // dead corner — the wasted trip
     { id: 'S3', col: 6, row: 1, role: 'stair' }, // return stair (house island)
     { id: 'house', col: 6, row: 0, role: 'house' },
   ],
@@ -100,8 +105,6 @@ const GROUND: MazeMap = {
     ['start', 'g1'],
     ['g1', 'g2'],
     ['g2', 'g3'],
-    ['g3', 'g4'],
-    ['g4', 'g5'],
     ['g3', 'g6'],
     ['g6', 'g7'],
     ['g7', 'g8'],
@@ -109,6 +112,7 @@ const GROUND: MazeMap = {
     ['g9', 'S2'],
     ['g9', 'g10'],
     ['g10', 'g11'],
+    ['S4', 'giso'], // isolated: you arrive here from below, and it goes nowhere
     ['S3', 'house'], // the house island — only reached by climbing S3
   ],
   locks: [],
@@ -118,9 +122,10 @@ const BASEMENT: MazeMap = {
   id: 'B',
   nodes: [
     { id: 'S1', col: 2, row: 6, role: 'stair' },
-    { id: 'bd1', col: 0, row: 6 }, // dead-end pocket off the near stair
+    { id: 'bd1', col: 0, row: 6 }, // dead-end stub off the near stair
     { id: 'bd2', col: 2, row: 4 },
-    { id: 'bd3', col: 0, row: 4 }, // dead-end
+    { id: 'bd3', col: 0, row: 4 },
+    { id: 'S4', col: 0, row: 2, role: 'stair' }, // looks like a way out…
     { id: 'S2', col: 6, row: 4, role: 'stair' },
     { id: 'b1', col: 4, row: 4 },
     { id: 'b2', col: 4, row: 2 },
@@ -131,9 +136,10 @@ const BASEMENT: MazeMap = {
     { id: 'S3', col: 6, row: 1, role: 'stair' },
   ],
   edges: [
-    ['S1', 'bd1'],
-    ['S1', 'bd2'], // near stair → dead-end pocket, both ways lead nowhere
+    ['S1', 'bd1'], // near stair → dead-end stub
+    ['S1', 'bd2'],
     ['bd2', 'bd3'],
+    ['bd3', 'S4'], // …the pocket leads to the decoy stair, not to the route
     ['S2', 'b1'],
     ['b1', 'b2'],
     ['b2', 'key'],
@@ -166,6 +172,10 @@ export const STAIRS: [StairEnd, StairEnd][] = [
   [
     { map: 'A', id: 'S3' },
     { map: 'B', id: 'S3' },
+  ],
+  [
+    { map: 'A', id: 'S4' },
+    { map: 'B', id: 'S4' },
   ],
 ]
 

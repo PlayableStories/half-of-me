@@ -451,10 +451,6 @@ button {
   transition: fill 0.4s ease, stroke 0.4s ease;
 }
 
-.worldmap__node.is-visited {
-  fill: var(--colour-yellow);
-}
-
 .worldmap__node.is-current {
   stroke: var(--ink);
   stroke-width: 0.8;
