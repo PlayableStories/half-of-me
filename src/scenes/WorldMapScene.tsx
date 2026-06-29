@@ -72,7 +72,13 @@ export function WorldMapScene({ goTo }: SceneProps) {
   function isEdgeOpen(map: MapId, a: string, b: string) {
     const lock = edgeLockOf(map, a, b)
     if (!lock) return true
-    if (lock.requires && !visited.has(visitKey(map, lock.requires))) return false
+    // `requires` may point at a node on another level (e.g. the key on the
+    // ground gating a basement path), so honour requiresMap when given.
+    if (
+      lock.requires &&
+      !visited.has(visitKey(lock.requiresMap ?? map, lock.requires))
+    )
+      return false
     if (lock.closesAfter && visited.has(visitKey(map, lock.closesAfter)))
       return false
     return true
