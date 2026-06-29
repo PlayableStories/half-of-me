@@ -372,9 +372,57 @@ button {
   text-align: center;
 }
 
+/* Square viewport sized by the smaller of width / height so the whole map fits
+   a desktop without scrolling. */
+.worldmap__viewport {
+  position: relative;
+  width: min(90vw, 560px, 66vh);
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* During a level change the two levels overlap and cross-fade. */
+.worldmap__viewport--xfade .worldmap__panel {
+  position: absolute;
+  inset: 0;
+}
+
+.worldmap__panel--out {
+  animation: map-fade-out var(--map-xfade, 700ms) ease both;
+}
+
+.worldmap__panel--in {
+  animation: map-fade-in var(--map-xfade, 700ms) ease both;
+}
+
+/* The leaving level recedes; the arriving one settles in from slightly
+   enlarged — a gentle depth shift between levels. */
+@keyframes map-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes map-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .worldmap__svg {
-  width: min(92vw, 720px);
+  width: 100%;
   height: auto;
+  display: block;
   cursor: pointer;
   overflow: visible;
 }
@@ -403,13 +451,25 @@ button {
   transition: fill 0.4s ease, stroke 0.4s ease;
 }
 
-.worldmap__node.is-visited {
-  fill: var(--colour-yellow);
-}
-
 .worldmap__node.is-current {
   stroke: var(--ink);
   stroke-width: 0.8;
+}
+
+/* Level-change points (staircases, conceptually): hollow dashed rings —
+   a way through to the other level, not a literal staircase. */
+.worldmap__node.is-stair {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 0.7;
+  stroke-dasharray: 1.4 1.2;
+}
+
+/* The key node: a filled accent so it reads as the thing worth reaching. */
+.worldmap__node.is-key {
+  fill: var(--colour-red, var(--ink));
+  stroke: var(--ink);
+  stroke-width: 0.6;
 }
 
 .worldmap__label {
@@ -575,5 +635,9 @@ button {
   }
   .worldmap__avatar.is-walking {
     animation: none;
+  }
+  .worldmap__panel--out,
+  .worldmap__panel--in {
+    animation-duration: 0.001ms;
   }
 }
