@@ -372,44 +372,50 @@ button {
   text-align: center;
 }
 
-/* Viewport clips the sliding track so only one map shows at a time. */
+/* Square viewport sized by the smaller of width / height so the whole map fits
+   a desktop without scrolling. */
 .worldmap__viewport {
-  width: min(92vw, 720px);
+  position: relative;
+  width: min(90vw, 560px, 66vh);
+  aspect-ratio: 1 / 1;
   overflow: hidden;
 }
 
-.worldmap__track {
-  display: flex;
-  width: 200%;
+/* During a level change the two levels overlap and cross-fade. */
+.worldmap__viewport--xfade .worldmap__panel {
+  position: absolute;
+  inset: 0;
 }
 
-.worldmap__panel {
-  flex: 0 0 50%;
+.worldmap__panel--out {
+  animation: map-fade-out var(--map-xfade, 700ms) ease both;
 }
 
-.worldmap__track.is-sliding-left {
-  animation: map-slide-left var(--map-slide, 600ms) ease both;
+.worldmap__panel--in {
+  animation: map-fade-in var(--map-xfade, 700ms) ease both;
 }
 
-.worldmap__track.is-sliding-right {
-  animation: map-slide-right var(--map-slide, 600ms) ease both;
-}
-
-@keyframes map-slide-left {
+/* The leaving level recedes; the arriving one settles in from slightly
+   enlarged — a gentle depth shift between levels. */
+@keyframes map-fade-out {
   from {
-    transform: translateX(0);
+    opacity: 1;
+    transform: scale(1);
   }
   to {
-    transform: translateX(-50%);
+    opacity: 0;
+    transform: scale(1.06);
   }
 }
 
-@keyframes map-slide-right {
+@keyframes map-fade-in {
   from {
-    transform: translateX(-50%);
+    opacity: 0;
+    transform: scale(1.12);
   }
   to {
-    transform: translateX(0);
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -454,8 +460,9 @@ button {
   stroke-width: 0.8;
 }
 
-/* Warps: hollow rings (a way through to the other side). */
-.worldmap__node.is-warp {
+/* Level-change points (staircases, conceptually): hollow dashed rings —
+   a way through to the other level, not a literal staircase. */
+.worldmap__node.is-stair {
   fill: var(--bg);
   stroke: var(--ink);
   stroke-width: 0.7;
@@ -633,8 +640,8 @@ button {
   .worldmap__avatar.is-walking {
     animation: none;
   }
-  .worldmap__track.is-sliding-left,
-  .worldmap__track.is-sliding-right {
+  .worldmap__panel--out,
+  .worldmap__panel--in {
     animation-duration: 0.001ms;
   }
 }

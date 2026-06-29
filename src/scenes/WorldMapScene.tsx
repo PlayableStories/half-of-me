@@ -10,20 +10,22 @@ import {
   gy,
   neighboursOf,
   nodeOf,
-  warpTarget,
+  stairTarget,
   type MapId,
 } from './mazeData'
 import type { SceneProps } from './types'
 
 /**
- * A two-map SMB3-style overworld. Each side is a graph of places joined by
- * dotted paths; the traveller steps node-to-node with arrows / WASD / clicks.
- * The house is visible on the first map but has no direct path — the way to it
- * runs through the other side. Warps link the two maps (slide/wipe transition);
- * one path is blocked until a key is found. Arriving on the house switches to
- * the house scene at once — no button, no extra keypress.
+ * A two-level SMB3-style overworld: a ground level and a basement below it,
+ * joined by staircases. Each level is a graph of places joined by dotted paths;
+ * the traveller steps node-to-node with arrows / WASD / clicks. The house is
+ * visible on the ground but has no direct path — the way to it runs down
+ * through the basement. One path is blocked until a key is found. Staircases
+ * sit at the same spot on both levels, so you drop straight down (or climb
+ * straight up) without moving. Arriving on the house switches to the house
+ * scene at once — no button, no extra keypress.
  *
- * The maze itself (nodes / edges / locks / warps) lives in mazeData.ts.
+ * The maze itself (nodes / edges / locks / stairs) lives in mazeData.ts.
  */
 const STEP_MS = 420
 
@@ -34,7 +36,6 @@ interface AvatarState {
 }
 
 interface Transition {
-  dir: 'left' | 'right'
   fromMap: MapId
   fromId: string
   toMap: MapId
@@ -81,28 +82,22 @@ export function WorldMapScene({ goTo }: SceneProps) {
     return neighboursOf(map, id).filter((n) => isEdgeOpen(map, id, n))
   }
 
-  /** Slide to the other map, landing on the warp's far end. */
-  function beginWarp(fromId: string, toMap: MapId, toId: string) {
+  /** Change level via a staircase, landing on its far end (same coordinates). */
+  function settleOnLevel(toMap: MapId, toId: string) {
     const land = nodeOf(toMap, toId)
-    const settle = () => {
-      setActiveMap(toMap)
-      setCurrent(toId)
-      setPos({ x: gx(land.col), y: gy(land.row) })
-      setVisited((prev) => new Set(prev).add(visitKey(toMap, toId)))
-      setTransition(null)
-    }
+    setActiveMap(toMap)
+    setCurrent(toId)
+    setPos({ x: gx(land.col), y: gy(land.row) })
+    setVisited((prev) => new Set(prev).add(visitKey(toMap, toId)))
+    setTransition(null)
+  }
+
+  function beginStair(fromId: string, toMap: MapId, toId: string) {
     if (prefersReducedMotion()) {
-      settle()
+      settleOnLevel(toMap, toId)
       return
     }
-    // Going to the other side slides left; coming back slides right.
-    setTransition({
-      dir: toMap === 'A' ? 'right' : 'left',
-      fromMap: activeMap,
-      fromId,
-      toMap,
-      toId,
-    })
+    setTransition({ fromMap: activeMap, fromId, toMap, toId })
   }
 
   function stepTo(targetId: string) {
@@ -125,13 +120,13 @@ export function WorldMapScene({ goTo }: SceneProps) {
       setVisited((prev) => new Set(prev).add(visitKey(activeMap, targetId)))
       walkingRef.current = false
       setWalking(false)
-      // Arriving at the house ends the map; a warp node hops to the other side.
+      // Arriving at the house ends the level; a staircase changes level.
       if (to.role === 'house') {
         goTo('house')
         return
       }
-      const warp = warpTarget(activeMap, targetId)
-      if (warp) beginWarp(targetId, warp.map, warp.id)
+      const stair = stairTarget(activeMap, targetId)
+      if (stair) beginStair(targetId, stair.map, stair.id)
     }
 
     if (prefersReducedMotion()) {
@@ -211,7 +206,7 @@ export function WorldMapScene({ goTo }: SceneProps) {
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  /** Render one map's paths and places. `avatar` is drawn when provided. */
+  /** Render one level's ground/earth, paths and places. */
   function renderMap(
     map: MapId,
     currentId: string,
@@ -253,38 +248,39 @@ export function WorldMapScene({ goTo }: SceneProps) {
         {MAPS[map].nodes.map((n) => {
           const x = gx(n.col)
           const y = gy(n.row)
-          const isHouse = n.role === 'house'
+          const visCls = visited.has(visitKey(map, n.id)) ? 'is-visited' : ''
+          const curCls = currentId === n.id ? 'is-current' : ''
+          const onClick = interactive ? () => stepTo(n.id) : undefined
+
+          if (n.role === 'house') {
+            return (
+              <g key={n.id} className="worldmap__place" onClick={onClick}>
+                {/* invisible hit area: the stroke-only house is hard to click */}
+                <circle cx={x} cy={y} r={7} fill="transparent" />
+                <g
+                  transform={`translate(${x} ${y})`}
+                  className={`worldmap__house ${curCls}`}
+                >
+                  <path d="M -4 1 L 0 -4 L 4 1" />
+                  <path d="M -3 0.5 V 5 H 3 V 0.5" />
+                  <rect x="-1" y="2" width="2" height="3" />
+                </g>
+              </g>
+            )
+          }
+
           const cls = [
             'worldmap__node',
-            n.role === 'warp' ? 'is-warp' : '',
+            n.role === 'stair' ? 'is-stair' : '',
             n.role === 'key' ? 'is-key' : '',
-            visited.has(visitKey(map, n.id)) ? 'is-visited' : '',
-            currentId === n.id ? 'is-current' : '',
+            visCls,
+            curCls,
           ]
             .join(' ')
             .trim()
           return (
-            <g
-              key={n.id}
-              className="worldmap__place"
-              onClick={interactive ? () => stepTo(n.id) : undefined}
-            >
-              {isHouse ? (
-                <>
-                  {/* invisible hit area: the stroke-only house is hard to click */}
-                  <circle cx={x} cy={y} r={7} fill="transparent" />
-                  <g
-                    transform={`translate(${x} ${y})`}
-                    className={`worldmap__house ${cls}`}
-                  >
-                    <path d="M -4 1 L 0 -4 L 4 1" />
-                    <path d="M -3 0.5 V 5 H 3 V 0.5" />
-                    <rect x="-1" y="2" width="2" height="3" />
-                  </g>
-                </>
-              ) : (
-                <circle cx={x} cy={y} r={2.3} className={cls} />
-              )}
+            <g key={n.id} className="worldmap__place" onClick={onClick}>
+              <circle cx={x} cy={y} r={2.3} className={cls} />
             </g>
           )
         })}
@@ -301,58 +297,32 @@ export function WorldMapScene({ goTo }: SceneProps) {
     )
   }
 
-  // During a warp, render both maps in a sliding track; otherwise just the
-  // active map. The track order puts whichever panel should be on the left
-  // first, so a single left/right slide reveals the destination.
+  // During a level change, cross-fade the two levels over each other with a
+  // slight zoom — the levels sit at different depths, so one recedes as the
+  // other settles in. The traveller stays at the same spot through it.
   let body
   if (transition) {
     const fromNode = nodeOf(transition.fromMap, transition.fromId)
     const toNode = nodeOf(transition.toMap, transition.toId)
-    const fromPanel = (
-      <div className="worldmap__panel" key="from">
-        {renderMap(transition.fromMap, transition.fromId, false, {
-          x: gx(fromNode.col),
-          y: gy(fromNode.row),
-          walking: false,
-        })}
-      </div>
-    )
-    const toPanel = (
-      <div className="worldmap__panel" key="to">
-        {renderMap(transition.toMap, transition.toId, false, {
-          x: gx(toNode.col),
-          y: gy(toNode.row),
-          walking: false,
-        })}
-      </div>
-    )
-    const slidingLeft = transition.dir === 'left'
     body = (
-      <div className="worldmap__viewport">
+      <div className="worldmap__viewport worldmap__viewport--xfade">
+        <div className="worldmap__panel worldmap__panel--out" key="from">
+          {renderMap(transition.fromMap, transition.fromId, false, {
+            x: gx(fromNode.col),
+            y: gy(fromNode.row),
+            walking: false,
+          })}
+        </div>
         <div
-          className={`worldmap__track ${slidingLeft ? 'is-sliding-left' : 'is-sliding-right'}`}
-          onAnimationEnd={() => {
-            const land = nodeOf(transition.toMap, transition.toId)
-            setActiveMap(transition.toMap)
-            setCurrent(transition.toId)
-            setPos({ x: gx(land.col), y: gy(land.row) })
-            setVisited((prev) =>
-              new Set(prev).add(visitKey(transition.toMap, transition.toId)),
-            )
-            setTransition(null)
-          }}
+          className="worldmap__panel worldmap__panel--in"
+          key="to"
+          onAnimationEnd={() => settleOnLevel(transition.toMap, transition.toId)}
         >
-          {slidingLeft ? (
-            <>
-              {fromPanel}
-              {toPanel}
-            </>
-          ) : (
-            <>
-              {toPanel}
-              {fromPanel}
-            </>
-          )}
+          {renderMap(transition.toMap, transition.toId, false, {
+            x: gx(toNode.col),
+            y: gy(toNode.row),
+            walking: false,
+          })}
         </div>
       </div>
     )
