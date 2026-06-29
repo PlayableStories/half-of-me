@@ -372,9 +372,51 @@ button {
   text-align: center;
 }
 
-.worldmap__svg {
+/* Viewport clips the sliding track so only one map shows at a time. */
+.worldmap__viewport {
   width: min(92vw, 720px);
+  overflow: hidden;
+}
+
+.worldmap__track {
+  display: flex;
+  width: 200%;
+}
+
+.worldmap__panel {
+  flex: 0 0 50%;
+}
+
+.worldmap__track.is-sliding-left {
+  animation: map-slide-left var(--map-slide, 600ms) ease both;
+}
+
+.worldmap__track.is-sliding-right {
+  animation: map-slide-right var(--map-slide, 600ms) ease both;
+}
+
+@keyframes map-slide-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes map-slide-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.worldmap__svg {
+  width: 100%;
   height: auto;
+  display: block;
   cursor: pointer;
   overflow: visible;
 }
@@ -410,6 +452,21 @@ button {
 .worldmap__node.is-current {
   stroke: var(--ink);
   stroke-width: 0.8;
+}
+
+/* Warps: hollow rings (a way through to the other side). */
+.worldmap__node.is-warp {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 0.7;
+  stroke-dasharray: 1.4 1.2;
+}
+
+/* The key node: a filled accent so it reads as the thing worth reaching. */
+.worldmap__node.is-key {
+  fill: var(--colour-red, var(--ink));
+  stroke: var(--ink);
+  stroke-width: 0.6;
 }
 
 .worldmap__label {
@@ -575,5 +632,9 @@ button {
   }
   .worldmap__avatar.is-walking {
     animation: none;
+  }
+  .worldmap__track.is-sliding-left,
+  .worldmap__track.is-sliding-right {
+    animation-duration: 0.001ms;
   }
 }
