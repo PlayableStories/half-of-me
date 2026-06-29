@@ -169,6 +169,8 @@ export function WorldMapScene({ goTo }: SceneProps) {
       }
     }
     if (best) stepTo(best)
+    // No path that way at all — sound the blocked-way beep.
+    else playFailBeep()
   }
 
   // Keyboard: arrows / WASD walk. Arriving on the house auto-advances, so there

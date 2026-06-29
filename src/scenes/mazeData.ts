@@ -70,23 +70,45 @@ export function gy(row: number) {
 // ---- the two levels -------------------------------------------------------
 // Staircase coordinates are shared between the levels (same col,row) so the
 // traveller stays in place when changing level:
-//   S1 (3,5) — near stair    S2 (3,1) — far stair    S3 (5,1) — return stair
+//   S1 (2,6) — near stair    S2 (6,4) — far stair    S3 (6,1) — return stair
+//
+// Both levels are proper little mazes that spread across the 7×7 grid, with
+// several dead-ends. The near stair is one step from the start; the far stair
+// is a long winding walk away.
 const GROUND: MazeMap = {
   id: 'A',
   nodes: [
-    { id: 'start', col: 1, row: 5, role: 'start' },
-    { id: 'S1', col: 3, row: 5, role: 'stair' },
-    { id: 'gUp1', col: 1, row: 3 },
-    { id: 'gUp2', col: 1, row: 1 },
-    { id: 'S2', col: 3, row: 1, role: 'stair' },
-    { id: 'S3', col: 5, row: 1, role: 'stair' },
-    { id: 'house', col: 5, row: 0, role: 'house' },
+    { id: 'start', col: 0, row: 6, role: 'start' },
+    { id: 'S1', col: 2, row: 6, role: 'stair' }, // near stair, by the start
+    { id: 'g1', col: 0, row: 4 },
+    { id: 'g2', col: 2, row: 4 },
+    { id: 'g3', col: 2, row: 2 },
+    { id: 'g4', col: 0, row: 2 },
+    { id: 'g5', col: 0, row: 0 }, // dead-end (top-left)
+    { id: 'g6', col: 4, row: 2 },
+    { id: 'g7', col: 4, row: 0 },
+    { id: 'g8', col: 2, row: 0 }, // dead-end (top)
+    { id: 'g9', col: 4, row: 4 },
+    { id: 'S2', col: 6, row: 4, role: 'stair' }, // far stair
+    { id: 'g10', col: 4, row: 6 },
+    { id: 'g11', col: 6, row: 6 }, // dead-end (bottom-right)
+    { id: 'S3', col: 6, row: 1, role: 'stair' }, // return stair (house island)
+    { id: 'house', col: 6, row: 0, role: 'house' },
   ],
   edges: [
     ['start', 'S1'],
-    ['start', 'gUp1'],
-    ['gUp1', 'gUp2'],
-    ['gUp2', 'S2'],
+    ['start', 'g1'],
+    ['g1', 'g2'],
+    ['g2', 'g3'],
+    ['g3', 'g4'],
+    ['g4', 'g5'],
+    ['g3', 'g6'],
+    ['g6', 'g7'],
+    ['g7', 'g8'],
+    ['g6', 'g9'],
+    ['g9', 'S2'],
+    ['g9', 'g10'],
+    ['g10', 'g11'],
     ['S3', 'house'], // the house island — only reached by climbing S3
   ],
   locks: [],
@@ -95,24 +117,32 @@ const GROUND: MazeMap = {
 const BASEMENT: MazeMap = {
   id: 'B',
   nodes: [
-    { id: 'S1', col: 3, row: 5, role: 'stair' },
-    { id: 'd1', col: 5, row: 5 },
-    { id: 'd2', col: 1, row: 5 },
-    { id: 'S2', col: 3, row: 1, role: 'stair' },
-    { id: 'bMid', col: 3, row: 3 },
-    { id: 'key', col: 1, row: 3, role: 'key' },
-    { id: 'bturn', col: 5, row: 3 },
-    { id: 'S3', col: 5, row: 1, role: 'stair' },
+    { id: 'S1', col: 2, row: 6, role: 'stair' },
+    { id: 'bd1', col: 0, row: 6 }, // dead-end pocket off the near stair
+    { id: 'bd2', col: 2, row: 4 },
+    { id: 'bd3', col: 0, row: 4 }, // dead-end
+    { id: 'S2', col: 6, row: 4, role: 'stair' },
+    { id: 'b1', col: 4, row: 4 },
+    { id: 'b2', col: 4, row: 2 },
+    { id: 'key', col: 2, row: 2, role: 'key' },
+    { id: 'bk1', col: 2, row: 0 }, // dead-end past the key
+    { id: 'b3', col: 4, row: 0 },
+    { id: 'b4', col: 6, row: 0 },
+    { id: 'S3', col: 6, row: 1, role: 'stair' },
   ],
   edges: [
-    ['S1', 'd1'],
-    ['S1', 'd2'], // near stair → dead-end pocket, both ways lead nowhere
-    ['S2', 'bMid'],
-    ['bMid', 'key'],
-    ['bMid', 'bturn'], // the blocked path: faint/closed until the key is found
-    ['bturn', 'S3'],
+    ['S1', 'bd1'],
+    ['S1', 'bd2'], // near stair → dead-end pocket, both ways lead nowhere
+    ['bd2', 'bd3'],
+    ['S2', 'b1'],
+    ['b1', 'b2'],
+    ['b2', 'key'],
+    ['key', 'bk1'],
+    ['b2', 'b3'],
+    ['b3', 'b4'], // the blocked path: faint/closed until the key is found
+    ['b4', 'S3'],
   ],
-  locks: [{ a: 'bMid', b: 'bturn', requires: 'key' }],
+  locks: [{ a: 'b3', b: 'b4', requires: 'key' }],
 }
 
 export const MAPS: Record<MapId, MazeMap> = { A: GROUND, B: BASEMENT }
