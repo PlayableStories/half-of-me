@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { content } from '../content'
 
 interface EndScreenProps {
@@ -9,6 +10,18 @@ interface EndScreenProps {
 export function EndScreen({ remembered, total, onRestart }: EndScreenProps) {
   const { ui } = content
   const complete = remembered === total
+
+  // Space / Enter (and so the gamepad confirm button) restart, like the button.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault()
+        onRestart()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onRestart])
   const partial = ui.endPartial
     .replace('{remembered}', String(remembered))
     .replace('{total}', String(total))
