@@ -2,13 +2,13 @@
 
 *A short game poem about leaving home and remembering it incompletely.*
 
-> You can remember where home was, or how it felt. Not both.
+> You can remember what it was, or how it felt. Not both.
 
 ## Artist statement
 
 Half of Me is about leaving the place you grew up in and discovering that memory
-returns it only in pieces. You can recall *where* something was, or *how it
-felt* — never both at once. The game makes that loss its rule.
+returns it only in pieces. You can recall *what* it was, or *how it felt* —
+never both at once. The game makes that loss its rule.
 
 It is played as a memory card game, but every match gives back only half a
 memory: the thing without the feeling, or the feeling without the thing. The
@@ -25,8 +25,8 @@ content.
 
 A single sitting, about 5–10 minutes. No fail state, nothing to score.
 
-You walk a short path to a house, are met by what is left of it, then play the
-memory game inside. The cards are shown face up to study, then turned over; you
+You find your way through a maze to a house, are met by what is left of it, then
+play the memory game inside. The cards are shown face up to study, then turned over; you
 flip two at a time. Two cards match if they share **either** the same *theme*
 (the thing remembered) **or** the same *colour* (the feeling remembered) — so
 each match returns one half and withholds the other.
@@ -39,10 +39,12 @@ enter to advance text.
 `title → world map → house → cards → ending`
 
 - **Title** — the name, and a fire crackling in the dark.
-- **World map** — a small overworld; you walk a gated path
-  (the past → the gap → the key → the other side → the present).
+- **World map** — a maze across two levels (a ground and a basement below it,
+  joined by staircases). The house is in sight from the start but has no direct
+  path; you wind through the maze, find a key that opens the blocked way, and
+  loop back to reach it.
 - **House** — you arrive at a curtained window that speaks: not your home, but
-  something of one left under the ash.
+  something of one still here, vanished into you.
 - **Cards** — the memory game itself.
 - **Ending** — what you brought back, and what wouldn't come together.
 
