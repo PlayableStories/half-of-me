@@ -58,6 +58,10 @@ enter to advance text.
   and re-encoded.
 - **Failure beep** — generated for this game (synthesized tone), no third-party
   rights.
+- **Key lock / unlock sounds** — from "100 CC0 SFX #2" by **rubberduck**
+  (`sfx100v2_lock_open_01`), [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
+  via [OpenGameArt](https://opengameart.org/content/100-cc0-sfx-2); the unlock is
+  the original clip, the lock is that clip reversed.
 
 All third-party assets are public domain (CC0); the work as a whole is
 distributable under CC BY 4.0.
