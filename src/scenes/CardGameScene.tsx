@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { content } from '../content'
 import type { Card, GamePhase, MatchInfo } from '../game/types'
 import { createDeck } from '../game/deck'
@@ -12,6 +12,8 @@ import type { SceneProps } from './types'
 const TOTAL_PAIRS = content.deck.length / 2
 const REVEAL_MATCH_MS = 700
 const REVEAL_MISS_MS = 1050
+/** Columns in the board grid — matches `--cols` in styles.css. */
+const COLS = 4
 
 /** A freshly shuffled deck shown face up for the preview phase. */
 function newPreviewCards(): Card[] {
@@ -31,12 +33,43 @@ export function CardGameScene({ goTo }: SceneProps) {
   const [currentMatch, setCurrentMatch] = useState<MatchInfo | null>(null)
   const [moves, setMoves] = useState(0)
   const [inputLocked, setInputLocked] = useState(false)
+  // Keyboard / gamepad cursor over the board (mouse / touch ignore it).
+  const [cursor, setCursor] = useState(0)
+  // Show the cursor ring only when the last input was a key / gamepad, so it
+  // stays hidden for players using touch or mouse. Starts hidden.
+  const [usingPointer, setUsingPointer] = useState(true)
 
   const matchedPairs = cards.filter((c) => c.state === 'matched').length / 2
+
+  // If the stored cursor lands on a now-matched (empty) slot, show it on the
+  // first card that still exists — derived, so we never setState in an effect.
+  const liveCursor =
+    cards[cursor]?.state === 'matched'
+      ? Math.max(0, cards.findIndex((c) => c.state !== 'matched'))
+      : cursor
 
   function startGame() {
     setCards((prev) => prev.map((c) => ({ ...c, state: 'facedown' })))
     setPhase('playing')
+  }
+
+  /** Move the cursor one cell, stepping over already-matched (empty) slots. */
+  function moveCursor(dx: number, dy: number) {
+    let idx = liveCursor
+    for (let step = 0; step < cards.length; step++) {
+      if (dx !== 0) {
+        const col = idx % COLS
+        if (col + dx < 0 || col + dx >= COLS) return // row edge
+        idx += dx
+      } else {
+        idx += dy * COLS
+        if (idx < 0 || idx >= cards.length) return // column edge
+      }
+      if (cards[idx]?.state !== 'matched') {
+        setCursor(idx)
+        return
+      }
+    }
   }
 
   function handleSelect(id: string) {
@@ -83,6 +116,66 @@ export function CardGameScene({ goTo }: SceneProps) {
     }
   }
 
+  // Keyboard / gamepad: Enter starts the preview, moves the cursor and flips
+  // cards while playing. Mouse / touch keep working in parallel. Re-bound each
+  // render so it reads the latest phase / cursor / lock state.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (phase === 'preview') {
+        if (e.key === 'Enter' || e.key === ' ') {
+          setUsingPointer(false)
+          e.preventDefault()
+          startGame()
+        }
+        return
+      }
+      if (phase !== 'playing' || inputLocked) return
+      setUsingPointer(false) // a nav / confirm key means we're not on pointer
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          e.preventDefault()
+          moveCursor(-1, 0)
+          break
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          e.preventDefault()
+          moveCursor(1, 0)
+          break
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          e.preventDefault()
+          moveCursor(0, -1)
+          break
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          e.preventDefault()
+          moveCursor(0, 1)
+          break
+        case 'Enter':
+        case ' ':
+          e.preventDefault()
+          if (cards[liveCursor]) handleSelect(cards[liveCursor].id)
+          break
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  // Any tap / click hides the cursor ring (pointer play needs no cursor).
+  useEffect(() => {
+    function onPointer() {
+      setUsingPointer(true)
+    }
+    window.addEventListener('pointerdown', onPointer)
+    return () => window.removeEventListener('pointerdown', onPointer)
+  }, [])
+
   function dismissStory() {
     setCurrentMatch(null)
     // `cards` already reflects the just-matched pair here.
@@ -106,6 +199,11 @@ export function CardGameScene({ goTo }: SceneProps) {
         <Board
           cards={cards}
           inputLocked={inputLocked || phase !== 'playing'}
+          cursorId={
+            phase === 'playing' && !usingPointer
+              ? cards[liveCursor]?.id
+              : undefined
+          }
           onSelect={handleSelect}
         />
 

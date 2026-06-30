@@ -7,10 +7,11 @@ import { ObjectIcon } from '../icons'
 interface CardViewProps {
   card: Card
   disabled: boolean
+  isCursor?: boolean
   onSelect: (id: string) => void
 }
 
-export function CardView({ card, disabled, onSelect }: CardViewProps) {
+export function CardView({ card, disabled, isCursor, onSelect }: CardViewProps) {
   const faceUp = card.state === 'faceup'
   const matched = card.state === 'matched'
 
@@ -19,7 +20,7 @@ export function CardView({ card, disabled, onSelect }: CardViewProps) {
   return (
     <button
       type="button"
-      className={`card ${faceUp ? 'is-faceup' : ''} ${matched ? 'is-matched' : ''}`}
+      className={`card ${faceUp ? 'is-faceup' : ''} ${matched ? 'is-matched' : ''} ${isCursor ? 'is-cursor' : ''}`}
       style={{ '--card-colour': `var(--colour-${card.colour})` } as CSSProperties}
       onClick={() => onSelect(card.id)}
       disabled={disabled || matched || faceUp}
