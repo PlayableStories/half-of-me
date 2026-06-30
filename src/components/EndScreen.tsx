@@ -15,7 +15,9 @@ export function EndScreen({ remembered, total, onRestart }: EndScreenProps) {
 
   return (
     <div className="overlay end" role="dialog">
-      <h2 className="end__line">{ui.endTitle}</h2>
+      <h2 className="end__line">
+        {complete ? ui.endTitleComplete : ui.endTitlePartial}
+      </h2>
       <p className="end__count">{complete ? ui.endComplete : partial}</p>
       <button type="button" className="button" onClick={onRestart}>
         {ui.playAgain}
