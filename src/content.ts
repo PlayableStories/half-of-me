@@ -25,9 +25,9 @@ export const content = {
   tagline: 'a place I only reach now in dreams',
   /** Line shown beneath the deck during the face-up preview phase. */
   previewCaption:
-    "Look as long as you like. The associations you catch now are the clues I'll remember them by.",
+    'Stay as long as you can. Memory comes back in fragments — the associations you make now are what will hold them together.',
   /** Label on the button that starts the game. */
-  startButton: 'Start remembering',
+  startButton: 'Find what you loved and left',
 
   /**
    * THEMES — each is one memory split into two different cards (`members`).
@@ -164,7 +164,8 @@ export const content = {
     turnSingular: 'turn',
     turnPlural: 'turns',
     storyContinueHint: 'tap, or press space, to continue',
-    endTitle: 'I found half of home.',
+    endTitleComplete: 'I found half of home.',
+    endTitlePartial: 'Something of it still remains in me.',
     endComplete: 'The other half stayed there.',
     endPartial:
       'I brought {remembered} of {total} back. The rest would not come together.',
@@ -207,8 +208,8 @@ export const content = {
     speaker: '',
     lines: [
       'You came a long way back.',
-      'This is not your home.\nBut something of one is still here, under the ash.',
-      'What returns will return halved — the place, or the feeling. Never both at once.',
+      'Do you belong here? Or have you already settled?\nA home is still here, only vanished into you.',
+      'You can remember what it was, or how it felt. Not both.',
     ],
     continueHint: 'tap, or press space, to continue',
   },
