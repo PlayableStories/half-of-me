@@ -18,10 +18,13 @@
  *   → B:S5 (key stair) ↑ A → collect the key
  *   → collecting it CLOSES the way back down (A:S5–key) and OPENS the key
  *     island onto the decoy cluster (A:key–c10, requires key)
- *   → cross to A:S4 (decoy stair) ↓ B → the decoy pocket now OPENS onward
- *     (B:S4–q00, requires key) → B:S3 (return stair) ↑ A → A:house
+ *   → cross to A:S4 (decoy stair) ↓ B → the bridge into the corridor now OPENS
+ *     (B:m2–q10, requires key) → B:S3 (return stair) ↑ A → A:house
  * The near stair (S1) is an early dead-end decoy: down to the basement pocket,
  * up the decoy stair, into a dead corner — until you hold the key.
+ *
+ * Every staircase is a dead-end (a leaf on each level): you reach it at the end
+ * of a path, and taking it is the only way onward.
  */
 
 export type MapId = 'A' | 'B'
@@ -144,7 +147,7 @@ const GROUND: MazeMap = {
     ['key', 'c10'], // …which then opens the way out (requires key)
     ['c10', 'giso'],
     ['giso', 'S4'], // …to the decoy stair
-    ['S5', 'c11'], // dead stub
+    ['c10', 'c11'], // dead stub (off c10, so the key stair S5 stays a dead-end)
     // house island
     ['S3', 'house'],
   ],
@@ -170,23 +173,26 @@ const BASEMENT: MazeMap = {
     { id: 'r3', col: 4, row: 3 },
     { id: 'r4', col: 4, row: 2 },
     { id: 'r5', col: 4, row: 1 },
-    { id: 'r6', col: 5, row: 1 }, // beyond the blocked corridor
+    { id: 'r6', col: 5, row: 1 }, // beyond the blocked corridor; joins the corridor
     { id: 'k1', col: 3, row: 1 }, // branch to the key stair
     { id: 'rb1', col: 5, row: 3 }, // dead-end branch
     { id: 'rb2', col: 5, row: 2 },
     { id: 'rb3', col: 3, row: 4 }, // dead-end branch
     { id: 'rb4', col: 2, row: 4 },
-    // decoy pocket: near stair → up the left side → decoy stair
+    // decoy pocket: near stair → up the left side → decoy stair (a dead-end spur)
     { id: 'pa', col: 1, row: 6 },
     { id: 'pb', col: 0, row: 6 },
     { id: 'pc', col: 0, row: 5 },
     { id: 'pd', col: 0, row: 4 },
     { id: 'pe', col: 0, row: 3 },
-    { id: 'pf', col: 0, row: 2 },
-    { id: 'pg', col: 2, row: 5 }, // dead-end stub
-    { id: 'ph', col: 3, row: 5 },
+    { id: 'pf', col: 0, row: 2 }, // pocket's top; the decoy stair S4 hangs off here
+    { id: 'pg', col: 1, row: 5 }, // dead-end stub (off pa now)
+    { id: 'ph', col: 2, row: 5 },
+    // bridge from the pocket top to the corridor (gated; keeps S4 a dead-end)
+    { id: 'm1', col: 1, row: 2 },
+    { id: 'm2', col: 1, row: 1 },
     // gated corridor (decoy pocket → return stair), opens only with the key
-    { id: 'q00', col: 0, row: 0 },
+    { id: 'q00', col: 0, row: 0 }, // dead-end corner off q10
     { id: 'q10', col: 1, row: 0 },
     { id: 'q20', col: 2, row: 0 },
     { id: 'q30', col: 3, row: 0 },
@@ -201,15 +207,15 @@ const BASEMENT: MazeMap = {
     ['r2', 'r3'],
     ['r3', 'r4'],
     ['r4', 'r5'],
-    ['r5', 'r6'], // the blocked corridor (need the key); return stair beyond it
-    ['r6', 'S3'],
+    ['r5', 'r6'], // the blocked corridor (need the key)
+    ['r6', 'q50'], // …beyond it, the main route joins the corridor
     ['r5', 'k1'],
     ['k1', 'S5'], // branch to the key stair
     ['r3', 'rb1'],
     ['rb1', 'rb2'],
     ['r2', 'rb3'],
     ['rb3', 'rb4'],
-    // decoy pocket
+    // decoy pocket (S4 is a dead-end spur off its top)
     ['S1', 'pa'],
     ['pa', 'pb'],
     ['pb', 'pc'],
@@ -217,10 +223,13 @@ const BASEMENT: MazeMap = {
     ['pd', 'pe'],
     ['pe', 'pf'],
     ['pf', 'S4'],
-    ['S1', 'pg'],
+    ['pa', 'pg'],
     ['pg', 'ph'],
-    // gated corridor: opens onward from the decoy only once you hold the key
-    ['S4', 'q00'],
+    // bridge: pocket top → corridor, gated so the pocket only opens with the key
+    ['pf', 'm1'],
+    ['m1', 'm2'],
+    ['m2', 'q10'],
+    // corridor (q00 is a dead-end corner; the return stair S3 hangs off q60)
     ['q00', 'q10'],
     ['q10', 'q20'],
     ['q20', 'q30'],
@@ -232,8 +241,8 @@ const BASEMENT: MazeMap = {
   locks: [
     // the blocked corridor on the main route (the key lives on the ground)
     { a: 'r5', b: 'r6', requires: 'key', requiresMap: 'A' },
-    // the decoy pocket only opens onward to the return stair with the key
-    { a: 'S4', b: 'q00', requires: 'key', requiresMap: 'A' },
+    // the bridge from the decoy pocket into the corridor opens only with the key
+    { a: 'm2', b: 'q10', requires: 'key', requiresMap: 'A' },
   ],
 }
 
