@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { content } from '../content'
 import { playFailBeep } from '../audio/failBeep'
+import { playKeyLock, playKeyUnlock } from '../audio/keyLatch'
 import {
   MAPS,
   START,
@@ -63,10 +64,23 @@ export function WorldMapScene({ goTo }: SceneProps) {
     () => new Set([visitKey(START.map, START.id)]),
   )
   const walkingRef = useRef(false)
+  // The key is a toggle switch: each arrival at the key node flips it, opening
+  // the key-gated paths (and unlock sound) or closing them again (lock sound).
+  // Starts locked, so the first arrival unlocks.
+  const [keyUnlocked, setKeyUnlocked] = useState(false)
   const [walking, setWalking] = useState(false)
   const [transition, setTransition] = useState<Transition | null>(null)
 
   const busy = () => walkingRef.current || transition !== null
+
+  /**
+   * Whether the gating node has been "reached". The key is special — it's a
+   * toggle (re-steppable), so its state is `keyUnlocked`, not a permanent visit.
+   */
+  function nodeReached(map: MapId, id: string) {
+    if (id === 'key') return keyUnlocked
+    return visited.has(visitKey(map, id))
+  }
 
   /** Open unless still gated by `requires`, or already shut by `closesAfter`. */
   function isEdgeOpen(map: MapId, a: string, b: string) {
@@ -74,13 +88,9 @@ export function WorldMapScene({ goTo }: SceneProps) {
     if (!lock) return true
     // `requires` may point at a node on another level (e.g. the key on the
     // ground gating a basement path), so honour requiresMap when given.
-    if (
-      lock.requires &&
-      !visited.has(visitKey(lock.requiresMap ?? map, lock.requires))
-    )
+    if (lock.requires && !nodeReached(lock.requiresMap ?? map, lock.requires))
       return false
-    if (lock.closesAfter && visited.has(visitKey(map, lock.closesAfter)))
-      return false
+    if (lock.closesAfter && nodeReached(map, lock.closesAfter)) return false
     return true
   }
 
@@ -126,6 +136,14 @@ export function WorldMapScene({ goTo }: SceneProps) {
       setVisited((prev) => new Set(prev).add(visitKey(activeMap, targetId)))
       walkingRef.current = false
       setWalking(false)
+      // Stepping onto the key toggles the lock: it opens the key-gated paths
+      // (unlock) or closes them again (lock), alternately, with the matching
+      // sound.
+      if (to.role === 'key') {
+        if (keyUnlocked) playKeyLock()
+        else playKeyUnlock()
+        setKeyUnlocked((v) => !v)
+      }
       // Arriving at the house ends the level; a staircase changes level.
       if (to.role === 'house') {
         goTo('house')
