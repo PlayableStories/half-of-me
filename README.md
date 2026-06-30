@@ -109,3 +109,10 @@ rewrite: register a component in `SCENES` and navigate with `goTo('<id>')`.
   via [OpenGameArt](https://opengameart.org/content/fireplace-sound-loop).
   Trimmed and re-encoded to a seamless `webm`/`mp3` loop. CC0 requires no
   attribution; credited here with thanks.
+- **Key lock / unlock sounds** (`src/assets/audio/key-unlock.*`,
+  `key-lock.*`) — from "100 CC0 SFX #2" by **rubberduck**
+  (`sfx100v2_lock_open_01`), released under
+  [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) via
+  [OpenGameArt](https://opengameart.org/content/100-cc0-sfx-2). The unlock is the
+  original clip; the lock is the same clip reversed. Both re-encoded to
+  `webm`/`mp3`. CC0 requires no attribution; credited here with thanks.
