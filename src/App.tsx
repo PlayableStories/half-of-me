@@ -4,6 +4,7 @@ import { TitleScene } from './scenes/TitleScene'
 import { WorldMapScene } from './scenes/WorldMapScene'
 import { HouseScene } from './scenes/HouseScene'
 import { CardGameScene } from './scenes/CardGameScene'
+import { useGamepad } from './input/useGamepad'
 import type { SceneId, SceneProps } from './scenes/types'
 
 /**
@@ -27,6 +28,9 @@ const SCENES: Partial<Record<SceneId, ComponentType<SceneProps>>> = {
 export default function App() {
   const [scene, setScene] = useState<SceneId>(INITIAL_SCENE)
   const Active = SCENES[scene]
+
+  // Bridge gamepad input to the keyboard events every scene already handles.
+  useGamepad()
 
   return (
     <div className="app">
